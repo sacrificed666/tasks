@@ -1,0 +1,198 @@
+@use "@/shared/styles/mixins" as *;
+
+.form {
+  display: grid;
+  gap: 18px;
+  padding: 18px 18px 20px;
+}
+
+.head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  padding-inline-start: 4px;
+}
+
+.toggle {
+  margin-block-start: 9px;
+}
+
+.title {
+  min-inline-size: 0;
+  min-block-size: 44px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  resize: none;
+  field-sizing: content;
+  overflow-wrap: anywhere;
+  outline: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  &:focus-visible {
+    outline: none;
+    background-color: var(--color-fill);
+    box-shadow: 0 0 0 2px var(--color-focus);
+  }
+
+  &[data-completed] {
+    color: var(--color-text-secondary);
+    text-decoration: line-through;
+    text-decoration-color: var(--color-text-tertiary);
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggleButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  block-size: 34px;
+  padding-inline: 10px 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  @include pressable(1.05);
+
+  svg {
+    font-size: 1.0625rem;
+  }
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+    color: var(--color-text);
+  }
+}
+
+.toggleButton[aria-pressed="true"] {
+  background-color: color-mix(in srgb, var(--color-star) 18%, transparent);
+  color: var(--color-star);
+}
+
+.notes {
+  display: grid;
+  gap: 8px;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.textarea {
+  min-block-size: 7.5rem;
+  max-block-size: 40vh;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background-color: var(--color-fill);
+  box-shadow:
+    inset 0 1px 2px var(--color-shade),
+    0 0 0 1px var(--color-separator);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  resize: vertical;
+  field-sizing: content;
+  outline: none;
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow:
+      inset 0 1px 2px var(--color-shade),
+      0 0 0 2px var(--color-focus);
+  }
+}
+
+.counter {
+  justify-self: end;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.timestamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+// Two equal buttons that always share one row, even in the narrow side panel
+.footer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 11rem));
+  justify-content: end;
+  gap: 8px;
+  padding-block-start: 14px;
+  border-block-start: 1px solid var(--color-separator);
+}
+
+.footerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-inline-size: 0;
+  block-size: 40px;
+  padding-inline: 10px 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  font-size: 0.875rem;
+  font-weight: 600;
+  @include pressable(1.04);
+
+  svg {
+    flex: none;
+    font-size: 1.0625rem;
+  }
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+  }
+
+  &[data-tone="danger"] {
+    color: var(--color-danger);
+
+    @include hover {
+      background-color: var(--color-danger-soft);
+    }
+  }
+}
+
+// A label longer than half the panel ends in an ellipsis instead of wrapping
+.footerLabel {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

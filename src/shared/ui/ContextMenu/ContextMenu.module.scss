@@ -1,0 +1,64 @@
+@use "@/shared/styles/mixins" as *;
+
+// Items inside follow the menu's corners, minus its padding
+.menu {
+  @include glass(var(--radius-lg), var(--glass-tint-overlay), var(--glass-blur-thick));
+  --menu-item-radius: var(--radius-in-menu);
+  position: fixed;
+  inset: auto;
+  inset-block-start: var(--menu-y, 0);
+  inset-inline-start: var(--menu-x, 0);
+  inline-size: min(17rem, calc(100vw - 16px));
+  max-block-size: calc(100dvh - 16px);
+  margin: 0;
+  padding: 6px;
+  border: 0;
+  overflow: hidden;
+  color: var(--color-text);
+  box-shadow: var(--glass-shadow-lifted), var(--glass-edge);
+  transform-origin: top left;
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    scale var(--duration-base) var(--ease-spring),
+    overlay var(--duration-fast) allow-discrete,
+    display var(--duration-fast) allow-discrete;
+
+  &:popover-open {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &[data-origin="bottom"] {
+    transform-origin: bottom left;
+  }
+
+  &:not(:popover-open) {
+    opacity: 0;
+    scale: 0.94;
+  }
+
+  @starting-style {
+    &:popover-open {
+      opacity: 0;
+      scale: 0.94;
+    }
+  }
+
+  &::backdrop {
+    background: transparent;
+  }
+
+  // A plain border in forced colours mode
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+  }
+}
+
+.body {
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}

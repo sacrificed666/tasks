@@ -1,0 +1,12 @@
+// A link with the arrow lines the arrow up with its text
+.withIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.arrow {
+  flex: none;
+  font-size: 0.875em;
+  opacity: 0.7;
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  // Long lines, so data and JSX stay on one line more often
+  "printWidth": 120,
+  // Imports sorted into groups by source
+  "sortImports": true,
+  // Build output, reports and generated files
+  "ignorePatterns": ["dist", "dev-dist", "coverage", "playwright-report", "test-results", "package-lock.json"]
+}

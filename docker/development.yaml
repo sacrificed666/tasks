@@ -1,0 +1,25 @@
+# Dev server with hot reload, run with: up --watch
+name: tasks-development
+
+services:
+  app:
+    image: tasks:development
+    build:
+      target: development
+    # APP_ENV decides whether search engines may index the site
+    environment:
+      APP_ENV: development
+    # APP_PORT changes the port on the host
+    ports:
+      - "${APP_PORT:-5173}:5173"
+    # Syncs edits into the container; a new lockfile rebuilds it
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - node_modules/
+            - dist/
+        - action: rebuild
+          path: package-lock.json

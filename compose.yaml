@@ -1,0 +1,8 @@
+# Shared by every environment; add one of docker/<environment>.yaml on top
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    # A tiny init process forwards stop signals and reaps zombies
+    init: true

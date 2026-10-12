@@ -1,0 +1,116 @@
+@use "@/shared/styles/mixins" as *;
+
+.region {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: calc(max(env(safe-area-inset-bottom), 18px) + var(--tabbar-offset));
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding-inline: 16px;
+  pointer-events: none;
+
+  @include hide-in-print;
+}
+
+// Half the height of one line, so a one-line toast is still a capsule
+.toast {
+  @include glass(var(--radius-xl), var(--glass-tint-strong), var(--glass-blur-thick));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  inline-size: min(100%, 30rem);
+  min-block-size: 56px;
+  padding: 7px 8px 7px 22px;
+  pointer-events: auto;
+  box-shadow: var(--glass-shadow-lifted), var(--glass-edge);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    translate var(--duration-slow) var(--ease-spring),
+    scale var(--duration-slow) var(--ease-spring);
+
+  @starting-style {
+    opacity: 0;
+    translate: 0 20px;
+    scale: 0.92;
+  }
+
+  &[data-tone="error"] .message {
+    color: var(--color-danger);
+  }
+
+  &:has(.icon) {
+    padding-inline-start: 16px;
+  }
+}
+
+.icon {
+  flex: none;
+  font-size: 1.25rem;
+
+  .toast[data-tone="success"] & {
+    color: var(--color-success);
+  }
+
+  .toast[data-tone="error"] & {
+    color: var(--color-danger);
+  }
+}
+
+// The icon and the text stay together; the buttons move below a long text
+.body {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-inline-size: 0;
+
+  // Without an action the close button always fits next to the text
+  .toast:not(:has(.action)) & {
+    flex-basis: 0;
+  }
+}
+
+// The action and the close button wrap together, at the end of the row
+.controls {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  margin-inline-start: auto;
+}
+
+// Two lines at most, so a phone still shows the whole message
+.message {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  block-size: 40px;
+  padding-inline: 14px 16px;
+  border-radius: var(--radius-full);
+  background-color: var(--glass-tint-accent);
+  color: var(--color-on-accent);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  @include pressable(1.06);
+
+  svg {
+    font-size: 1.0625rem;
+  }
+
+  @include hover {
+    background-color: var(--color-accent);
+  }
+}

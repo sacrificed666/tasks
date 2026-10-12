@@ -1,0 +1,201 @@
+@use "@/shared/styles/mixins" as *;
+
+// The fixed backdrop behind the app
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  contain: strict;
+  background-color: var(--color-backdrop);
+  background-image: var(--backdrop-base);
+  transition: background-color var(--duration-slow) var(--ease-out);
+
+  @include hide-in-print;
+}
+
+// Soft colour orbs
+.aurora {
+  position: absolute;
+  inset: 0;
+}
+
+.orb {
+  --size: 60vmax;
+  position: absolute;
+  inline-size: var(--size);
+  block-size: var(--size);
+  margin: calc(var(--size) / -2);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--tone), transparent);
+  opacity: var(--orb-opacity);
+  transition: opacity var(--duration-slow) var(--ease-out);
+
+  // Full effects let the orbs glow and drift
+  :root[data-effects="full"] & {
+    opacity: var(--orb-opacity-rich);
+    mix-blend-mode: var(--orb-blend);
+    animation: drift var(--duration) var(--ease-in-out) var(--delay) infinite alternate;
+    will-change: translate, scale;
+  }
+
+  &[data-orb="1"] {
+    --tone: var(--orb-1);
+    --size: 70vmax;
+    --dx: 12vmax;
+    --dy: 8vmax;
+    --duration: 38s;
+    --delay: -6s;
+    inset-block-start: 30%;
+    inset-inline-start: 22%;
+  }
+
+  &[data-orb="2"] {
+    --tone: var(--orb-2);
+    --size: 58vmax;
+    --dx: -10vmax;
+    --dy: 12vmax;
+    --duration: 44s;
+    --delay: -18s;
+    inset-block-start: 10%;
+    inset-inline-start: 78%;
+  }
+
+  &[data-orb="3"] {
+    --tone: var(--orb-3);
+    --size: 52vmax;
+    --dx: -14vmax;
+    --dy: -9vmax;
+    --duration: 50s;
+    --delay: -30s;
+    inset-block-start: 90%;
+    inset-inline-start: 72%;
+  }
+
+  &[data-orb="4"] {
+    --tone: var(--orb-4);
+    --size: 46vmax;
+    --dx: 10vmax;
+    --dy: -12vmax;
+    --duration: 42s;
+    --delay: -12s;
+    inset-block-start: 94%;
+    inset-inline-start: 6%;
+  }
+
+  &[data-orb="5"] {
+    --tone: var(--orb-5);
+    --size: 50vmax;
+    --dx: 9vmax;
+    --dy: 10vmax;
+    --duration: 47s;
+    --delay: -24s;
+    inset-block-start: 0%;
+    inset-inline-start: 2%;
+  }
+}
+
+// Faint waves over the orbs
+.waves {
+  position: absolute;
+  inset: -4%;
+  background: url("@/shared/assets/waves.svg") center / cover no-repeat;
+  filter: var(--waves-filter);
+  opacity: var(--waves-opacity);
+}
+
+// Stars for the nebula backdrop
+.stars {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 24px 36px, var(--star-color), transparent),
+    radial-gradient(1px 1px at 118px 92px, var(--star-color), transparent),
+    radial-gradient(1.5px 1.5px at 206px 168px, var(--star-color), transparent),
+    radial-gradient(1px 1px at 296px 44px, var(--star-color), transparent),
+    radial-gradient(1px 1px at 64px 226px, var(--star-color), transparent),
+    radial-gradient(1.5px 1.5px at 262px 262px, var(--star-color), transparent),
+    radial-gradient(1px 1px at 172px 12px, var(--star-color), transparent),
+    radial-gradient(1px 1px at 330px 190px, var(--star-color), transparent);
+  background-size: 360px 300px;
+  opacity: 0.8;
+}
+
+// Coloured backdrops tint the base gradient
+:root[data-backdrop="spectrum"] .backdrop,
+:root[data-backdrop="sunset"] .backdrop,
+:root[data-backdrop="ocean"] .backdrop,
+:root[data-backdrop="nebula"] .backdrop {
+  background-image: linear-gradient(
+    165deg,
+    color-mix(in oklab, var(--color-backdrop) 84%, var(--orb-1)) 0%,
+    var(--color-backdrop) 52%,
+    color-mix(in oklab, var(--color-backdrop) 86%, var(--orb-3)) 100%
+  );
+}
+
+// Nebula shows stars instead of waves
+:root[data-backdrop="nebula"] {
+  .stars {
+    display: block;
+  }
+
+  .waves {
+    display: none;
+  }
+}
+
+// Plain keeps only a soft accent glow
+:root[data-backdrop="plain"] {
+  .backdrop {
+    background-image:
+      radial-gradient(120% 80% at 10% 0%, color-mix(in srgb, var(--color-accent) 16%, transparent), transparent 60%),
+      radial-gradient(90% 70% at 100% 100%, color-mix(in srgb, var(--color-accent) 10%, transparent), transparent 65%);
+  }
+
+  .aurora,
+  .waves,
+  .grain {
+    display: none;
+  }
+}
+
+// Film grain over everything in full effects
+.grain {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: var(--grain-opacity);
+
+  :root[data-effects="full"] & {
+    display: block;
+  }
+}
+
+// Orbs drift and breathe
+@keyframes drift {
+  0% {
+    translate: 0 0;
+    scale: 1;
+  }
+
+  50% {
+    translate: var(--dx) var(--dy);
+    scale: 1.18;
+  }
+
+  100% {
+    translate: calc(var(--dx) * -0.7) calc(var(--dy) * 0.6);
+    scale: 0.88;
+  }
+}
+
+// Orbs stay still for reduced motion
+@media (prefers-reduced-motion: reduce) {
+  :root[data-effects="full"] .orb {
+    animation: none;
+  }
+}

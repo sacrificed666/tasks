@@ -1,0 +1,23 @@
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-inline-size: 0;
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.logo {
+  display: block;
+  flex: none;
+  border-radius: 9px;
+  box-shadow: 0 4px 12px -4px var(--color-shade);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}

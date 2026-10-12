@@ -1,0 +1,70 @@
+@use "mixins" as *;
+
+// The small caps heading of a menu
+@mixin menu-heading {
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+// One option of a menu
+@mixin menu-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  inline-size: 100%;
+  min-block-size: 40px;
+  padding-inline: 10px;
+  border-radius: var(--menu-item-radius, var(--radius-in-popover));
+  font-size: 0.9375rem;
+  text-align: start;
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+  }
+}
+
+// A line between menu groups
+@mixin menu-separator {
+  block-size: 1px;
+  margin: 6px 8px;
+  background-color: var(--color-separator);
+}
+
+// A small pill button such as a date or project chip
+@mixin chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-inline-size: 100%;
+  block-size: 34px;
+  padding-inline: 10px 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  @include pressable(1.05);
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+    color: var(--color-text);
+  }
+
+  &[aria-expanded="true"] {
+    box-shadow: 0 0 0 1.5px currentColor;
+  }
+}

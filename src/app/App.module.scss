@@ -1,0 +1,85 @@
+@use "@/shared/styles/mixins" as *;
+
+.app {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100svh;
+
+  // Sideways moves stay with the page, which turns its lists with them
+  @include below(lg) {
+    touch-action: pan-y pinch-zoom;
+  }
+}
+
+.body {
+  @include container;
+  flex: 1;
+  display: grid;
+  grid-template-areas: "sidebar main";
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px 28px;
+  padding-block: calc(var(--titlebar-height) + 16px) 48px;
+
+  // Only the list goes on paper
+  @media print {
+    display: block;
+    padding-block: 0;
+  }
+
+  // A third column for the task details on wide screens
+  @include from(xl) {
+    grid-template-areas: "sidebar main inspector";
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--inspector-width);
+  }
+
+  // One column on phones: toolbar, tasks, then the navigation
+  @include below(lg) {
+    grid-template-areas:
+      "toolbar"
+      "main"
+      "sidebar";
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding-block: 0 24px;
+  }
+}
+
+.skip {
+  position: fixed;
+  inset-block-start: 12px;
+  inset-inline-start: 12px;
+  z-index: 300;
+  padding: 10px 16px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: 600;
+  text-decoration: none;
+  translate: 0 calc(-100% - 24px);
+  transition: translate var(--duration-base) var(--ease-spring);
+
+  &:focus-visible {
+    translate: 0;
+  }
+}
+
+.titlebar {
+  display: none;
+
+  // A draggable title bar for the installed app on desktop
+  @media (display-mode: window-controls-overlay) and (min-width: 900px) {
+    display: block;
+    position: fixed;
+    inset-block-start: env(titlebar-area-y, 0);
+    inset-inline-start: env(titlebar-area-x, 0);
+    z-index: 90;
+    inline-size: env(titlebar-area-width, 100%);
+    block-size: var(--titlebar-height);
+    -webkit-app-region: drag;
+    app-region: drag;
+  }
+}

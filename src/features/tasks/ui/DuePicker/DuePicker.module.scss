@@ -1,0 +1,175 @@
+@use "@/shared/styles/mixins" as *;
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  block-size: 34px;
+  padding-inline: 10px 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  @include pressable(1.05);
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+    color: var(--color-text);
+  }
+
+  &[data-empty] {
+    inline-size: 34px;
+    padding: 0;
+    justify-content: center;
+    background: none;
+
+    @include hover {
+      background-color: var(--color-fill);
+    }
+  }
+
+  &[data-tone="today"] {
+    background-color: var(--color-warning-soft);
+    color: var(--color-warning);
+  }
+
+  &[data-tone="overdue"] {
+    background-color: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+
+  &[data-tone="upcoming"] {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-bright);
+  }
+
+  &[aria-expanded="true"] {
+    box-shadow: 0 0 0 1.5px currentColor;
+  }
+}
+
+.chipIcon {
+  font-size: 1.0625rem;
+}
+
+.panel {
+  inline-size: min(19rem, calc(100vw - 24px));
+  max-block-size: calc(100dvh - 24px);
+}
+
+.heading {
+  padding: 8px 12px 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.quick {
+  min-inline-size: 0;
+  margin: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 0 2px 6px;
+  border-block-end: 1px solid var(--color-separator);
+  margin-block-end: 4px;
+}
+
+.quickOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-inline-size: 0;
+  padding: 8px 2px 6px;
+  border-radius: calc(var(--radius-in-popover) - 2px);
+  color: var(--color-text-secondary);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+  @include pressable(0.94);
+
+  @include hover {
+    background-color: var(--color-fill);
+    color: var(--color-text);
+  }
+
+  &[aria-pressed="true"] {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-bright);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+.quickIcon {
+  font-size: 1.25rem;
+}
+
+.quickLabel {
+  max-inline-size: 100%;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.remove {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  inline-size: 100%;
+  block-size: 40px;
+  margin-block-start: 2px;
+  padding-inline: 12px;
+  border-radius: var(--radius-in-popover);
+  color: var(--color-danger);
+  font-size: 0.9375rem;
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-danger-soft);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+.removeIcon {
+  font-size: 1.125rem;
+}
+
+.chip[data-detected] {
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, currentColor 55%, transparent);
+
+  .chipIcon {
+    animation: twinkle 1.6s var(--ease-in-out) infinite;
+  }
+}
+
+// A detected date twinkles once it is found in the title
+@keyframes twinkle {
+  50% {
+    opacity: 0.55;
+    scale: 0.85;
+  }
+}
+
+// No twinkle for reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .chip[data-detected] .chipIcon {
+    animation: none;
+  }
+}

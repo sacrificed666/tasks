@@ -1,0 +1,149 @@
+@use "tokens";
+@use "mixins";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+// No font inflation or tap highlight on phones
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+// Theme colours that fade when the appearance changes
+body {
+  min-block-size: 100svh;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--color-text);
+  background-color: var(--color-backdrop);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  border: 0;
+  background: none;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+a {
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+svg {
+  flex: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background-color: var(--color-accent-soft);
+}
+
+.visually-hidden {
+  @include mixins.visually-hidden;
+}
+
+// Each project colour name sets the project colour variable
+[data-project-color="blue"] {
+  --project-color: var(--project-blue);
+}
+
+[data-project-color="indigo"] {
+  --project-color: var(--project-indigo);
+}
+
+[data-project-color="violet"] {
+  --project-color: var(--project-violet);
+}
+
+[data-project-color="pink"] {
+  --project-color: var(--project-pink);
+}
+
+[data-project-color="red"] {
+  --project-color: var(--project-red);
+}
+
+[data-project-color="orange"] {
+  --project-color: var(--project-orange);
+}
+
+[data-project-color="yellow"] {
+  --project-color: var(--project-yellow);
+}
+
+[data-project-color="green"] {
+  --project-color: var(--project-green);
+}
+
+[data-project-color="teal"] {
+  --project-color: var(--project-teal);
+}
+
+[data-project-color="gray"] {
+  --project-color: var(--project-gray);
+}
+
+// Selected and current items are outlined in forced colours mode
+@media (forced-colors: active) {
+  [aria-current="page"],
+  [aria-pressed="true"],
+  [aria-checked="true"],
+  [role="option"][aria-selected="true"],
+  label:has(> input[type="radio"]:checked) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+
+// Glass, shadows and motion mean nothing on paper; inline styles set some of them
+@media print {
+  body {
+    background: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build output and local Vite files
+/dist/
+/dist-ssr/
+/dev-dist/
+*.tsbuildinfo
+*.local
+
+# Test reports
+/coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+/lighthouse-live/
+
+# Environment files and keys; only the example is shared
+.env
+.env.*
+!.env.example
+*.pem
+
+# Editors and assistants
+.claude/
+.vscode/
+.idea/
+.fleet/
+.zed/
+*.swp
+*~
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

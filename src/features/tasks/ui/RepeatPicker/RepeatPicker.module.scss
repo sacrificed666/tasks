@@ -1,0 +1,82 @@
+@use "@/shared/styles/mixins" as *;
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  block-size: 34px;
+  padding-inline: 10px 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  @include pressable(1.05);
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+    color: var(--color-text);
+  }
+
+  &[data-active] {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-bright);
+  }
+
+  &[aria-expanded="true"] {
+    box-shadow: 0 0 0 1.5px currentColor;
+  }
+}
+
+.icon {
+  font-size: 1.0625rem;
+}
+
+.panel {
+  inline-size: min(15rem, calc(100vw - 24px));
+}
+
+.heading {
+  padding: 6px 10px 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  inline-size: 100%;
+  min-block-size: 40px;
+  padding-inline: 10px;
+  border-radius: var(--radius-in-popover);
+  font-size: 0.9375rem;
+  text-align: start;
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+.optionLabel {
+  flex: 1;
+}
+
+.check {
+  font-size: 1rem;
+  color: var(--color-accent-bright);
+  opacity: 0;
+
+  .option[aria-pressed="true"] & {
+    opacity: 1;
+  }
+}

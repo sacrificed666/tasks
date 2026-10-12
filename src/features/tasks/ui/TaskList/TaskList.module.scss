@@ -1,0 +1,22 @@
+@use "@/shared/styles/mixins" as *;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.clear {
+  @include glass(var(--radius-full));
+  @include pressable(1.06);
+  block-size: 32px;
+  padding-inline: 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+
+  @include hover {
+    background-color: var(--glass-tint-hover);
+    color: var(--color-danger);
+    --light-strength: 0.18;
+  }
+}

@@ -1,0 +1,411 @@
+@use "@/shared/styles/mixins" as *;
+
+.item {
+  display: grid;
+  grid-template-rows: 1fr;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64px;
+  transition: grid-template-rows var(--duration-base) var(--ease-in-out);
+
+  // Rows render fully while a task is dragged
+  :root[data-dragging] & {
+    content-visibility: visible;
+  }
+
+  // Every row is printed, and none is split between two pages
+  @media print {
+    content-visibility: visible;
+    break-inside: avoid;
+  }
+
+  &[data-leaving] {
+    grid-template-rows: 0fr;
+    pointer-events: none;
+  }
+}
+
+.collapse {
+  position: relative;
+  min-block-size: 0;
+
+  .item[data-leaving] & {
+    overflow: hidden;
+  }
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    "check title actions"
+    "check meta actions";
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-content: center;
+  align-items: center;
+  column-gap: 12px;
+  min-block-size: 56px;
+  padding: 8px 8px 8px 16px;
+  touch-action: pan-y;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    translate var(--duration-slow) var(--ease-spring),
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 54px 0;
+    block-size: 1px;
+    background-color: var(--color-separator);
+    pointer-events: none;
+
+    .item:first-child & {
+      display: none;
+    }
+  }
+
+  @starting-style {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  .item[data-leaving] & {
+    opacity: 0;
+  }
+
+  &[data-selected] {
+    background-color: color-mix(in srgb, var(--color-accent) 16%, transparent);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  &[data-dragging] {
+    z-index: 2;
+    opacity: 0.4;
+    background-color: var(--color-fill);
+  }
+
+  &[data-editing] {
+    background-color: var(--color-fill);
+  }
+
+  .item[data-swipe] & {
+    translate: var(--swipe, 0) 0;
+    background-color: var(--color-surface);
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  &:not(:has(.meta)) {
+    grid-template-areas: "check title actions";
+  }
+
+  // Chips move under the title in a narrow list
+  @container task-list (max-width: 560px) {
+    grid-template-areas: "check title actions";
+    padding: 8px 6px 8px 14px;
+
+    &:has(.meta) {
+      grid-template-areas:
+        "check title title"
+        ". meta actions";
+      row-gap: 2px;
+      padding-block: 10px 6px;
+    }
+
+    &::before {
+      inset-inline-start: 52px;
+    }
+  }
+}
+
+.checkbox {
+  grid-area: check;
+}
+
+.title {
+  grid-area: title;
+  justify-self: start;
+  max-inline-size: 100%;
+  margin: -2px -6px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1.4;
+  text-align: start;
+  overflow-wrap: anywhere;
+  cursor: text;
+  text-decoration: line-through;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1.5px;
+  transition:
+    color var(--duration-base) var(--ease-out),
+    text-decoration-color var(--duration-base) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  .row[data-completed] & {
+    color: var(--color-text-tertiary);
+    text-decoration-color: var(--color-text-tertiary);
+  }
+
+  // Completed titles keep a visible line-through
+  @media (forced-colors: active) {
+    text-decoration: none;
+
+    .row[data-completed] & {
+      text-decoration: line-through;
+    }
+  }
+}
+
+.editor {
+  grid-area: title;
+  min-inline-size: 0;
+  block-size: 38px;
+  margin-inline-start: -6px;
+  padding-inline: 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-fill);
+  box-shadow:
+    inset 0 1px 2px var(--color-shade),
+    0 0 0 1px var(--color-separator);
+  font-size: 1rem;
+  outline: none;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow:
+      inset 0 1px 2px var(--color-shade),
+      0 0 0 2px var(--color-focus);
+  }
+}
+
+.meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-block-start: 4px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  min-block-size: 22px;
+  padding: 2px 8px 2px 6px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+
+  &[data-tone="today"] {
+    background-color: var(--color-warning-soft);
+    color: var(--color-warning);
+  }
+
+  &[data-tone="overdue"] {
+    background-color: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+
+  &[data-tone="upcoming"] {
+    color: var(--color-accent-bright);
+  }
+
+  &[data-tone="done"] {
+    background-color: var(--color-success-soft);
+    color: var(--color-success);
+  }
+}
+
+.chipIcon {
+  font-size: 0.875rem;
+}
+
+// One line with an ellipsis, so a long project name never turns into a blob
+.chipLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag {
+  padding-inline: 8px;
+  color: var(--color-accent-bright);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+  @include pressable(0.94);
+
+  @include hover {
+    background-color: var(--color-accent-soft);
+  }
+}
+
+.project {
+  gap: 4px;
+  padding-inline: 4px 9px;
+  color: var(--color-text-secondary);
+  @include pressable(0.94);
+
+  @include hover {
+    background-color: color-mix(in srgb, var(--project-color) 18%, transparent);
+    color: var(--color-text);
+  }
+}
+
+.projectIcon {
+  margin-inline-end: -1px;
+}
+
+.actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 2px;
+}
+
+.star[aria-pressed="true"] {
+  color: var(--color-star);
+}
+
+.swipe {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 22px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+
+  .item[data-swipe] & {
+    opacity: 1;
+  }
+
+  .item[data-swipe="complete"] & {
+    background-color: var(--color-success-soft);
+    color: var(--color-success);
+  }
+
+  .item[data-swipe="delete"] & {
+    background-color: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+
+  .item[data-swipe="complete"][data-armed] & {
+    background-color: var(--color-success);
+    color: var(--color-on-accent);
+  }
+
+  .item[data-swipe="delete"][data-armed] & {
+    background-color: var(--color-danger);
+    color: var(--color-on-accent);
+  }
+}
+
+.swipeIcon {
+  font-size: 1.375rem;
+  opacity: 0;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    scale var(--duration-base) var(--ease-bounce);
+
+  .item[data-armed] & {
+    scale: 1.25;
+  }
+}
+
+.item[data-swipe="complete"] .swipeIcon:first-child,
+.item[data-swipe="delete"] .swipeIcon:last-child {
+  opacity: 1;
+}
+
+// Fewer row buttons in a narrow list; the menu has them all
+@container task-list (max-width: 560px) {
+  .schedule,
+  .delete {
+    display: none;
+  }
+}
+
+// Long press opens our menu instead of selecting text
+@media (pointer: coarse) {
+  .row {
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+
+  .info {
+    display: none;
+  }
+}
+
+.handle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-tertiary);
+  font-size: 1.0625rem;
+  cursor: grab;
+  touch-action: none;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    color: var(--color-text);
+    background-color: var(--color-fill);
+  }
+
+  .row[data-dragging] & {
+    color: var(--color-text);
+    cursor: grabbing;
+  }
+
+  // A larger drag handle for fingers
+  @media (pointer: coarse) {
+    inline-size: 40px;
+    block-size: 40px;
+  }
+}
+
+// Row buttons appear on hover and focus with a mouse
+@media (hover: hover) and (pointer: fine) {
+  .action {
+    opacity: 0;
+  }
+
+  .star[aria-pressed="true"],
+  .action[aria-expanded="true"],
+  .row:hover .action,
+  .row:focus-within .action,
+  .row[data-dragging] .action {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,21 @@
+// A live region that stays in the page, so going offline is announced
+.region {
+  display: flex;
+  flex: none;
+
+  // Empty, it takes no room in the toolbar
+  &:empty {
+    position: absolute;
+  }
+}
+
+.badge {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning);
+  font-size: 1.0625rem;
+}
