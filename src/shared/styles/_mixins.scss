@@ -1,0 +1,177 @@
+@use "sass:map";
+
+// Small phone, phone, tablet, laptop and wide desktop widths
+$breakpoints: (
+  "xs": 380px,
+  "sm": 480px,
+  "md": 600px,
+  "lg": 900px,
+  "xl": 1240px,
+);
+
+// Styles from a breakpoint up
+@mixin from($name) {
+  @media (width >= map.get($breakpoints, $name)) {
+    @content;
+  }
+}
+
+// Styles below a breakpoint
+@mixin below($name) {
+  @media (width < map.get($breakpoints, $name)) {
+    @content;
+  }
+}
+
+// Liquid glass: tint, blur, rim, sheen and the light under the pointer
+@mixin glass($radius: var(--radius-lg), $tint: var(--glass-tint), $blur: var(--glass-blur), $content: false) {
+  position: relative;
+  isolation: isolate;
+  border-radius: $radius;
+  background-color: $tint;
+  box-shadow: var(--glass-shadow), var(--glass-edge);
+  -webkit-backdrop-filter: blur($blur) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+  backdrop-filter: blur($blur) var(--glass-refraction, opacity(1)) saturate(var(--glass-saturate))
+    brightness(var(--glass-brightness));
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  &::before {
+    padding: 1px;
+    background: var(--glass-rim);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  &::after {
+    background: var(--glass-sheen);
+  }
+
+  // Full effects add a light that follows the pointer
+  :root[data-effects="full"] &::after {
+    background:
+      radial-gradient(
+        160px circle at var(--light-x) var(--light-y),
+        rgb(255 255 255 / var(--light-strength)),
+        transparent 72%
+      ),
+      var(--glass-sheen);
+    transition: --light-strength var(--duration-slow) var(--ease-out);
+  }
+
+  // Reduced effects: flat glass without blur, masked rims or sheen
+  :root[data-effects="reduced"] & {
+    @if $content {
+      background-color: var(--glass-tint-content);
+    }
+
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+
+  // A plain border in forced colours mode
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+  }
+}
+
+// Glass for bars that span the screen edge to edge
+@mixin glass-bar {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--glass-tint-bar);
+  box-shadow: var(--bar-shadow);
+  -webkit-backdrop-filter: blur(var(--glass-blur-thick)) saturate(var(--glass-saturate))
+    brightness(var(--glass-brightness));
+  backdrop-filter: blur(var(--glass-blur-thick)) var(--glass-refraction, opacity(1)) saturate(var(--glass-saturate))
+    brightness(var(--glass-brightness));
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--glass-sheen);
+    pointer-events: none;
+  }
+
+  // Reduced effects drop the blur
+  :root[data-effects="reduced"] & {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  // Plain borders in forced colours mode
+  @media (forced-colors: active) {
+    border-block: 1px solid CanvasText;
+  }
+}
+
+// Hover styles only for a mouse or a trackpad
+@mixin hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+// A springy press for buttons
+@mixin pressable($scale: 0.96) {
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out),
+    scale var(--duration-slow) var(--ease-bounce),
+    --light-strength var(--duration-slow) var(--ease-out);
+
+  &:active:not(:disabled) {
+    scale: $scale;
+    transition-duration: var(--duration-fast);
+  }
+}
+
+// Hidden on screen but read by screen readers
+@mixin visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+// The centred page width with side margins
+@mixin container {
+  inline-size: min(100% - 32px, var(--layout-width));
+  margin-inline: auto;
+}
+
+// Left out of a printed page
+@mixin hide-in-print {
+  @media print {
+    display: none;
+  }
+}

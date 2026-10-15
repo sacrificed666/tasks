@@ -1,0 +1,101 @@
+@use "@/shared/styles/mixins" as *;
+
+.screen {
+  display: grid;
+  place-items: center;
+  min-block-size: 100svh;
+  padding: 24px 16px;
+}
+
+.card {
+  @include glass(var(--radius-xl), var(--glass-tint-strong), var(--glass-blur-thick));
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  inline-size: min(100%, 30rem);
+  padding: 32px 24px 24px;
+  text-align: center;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: 1.75rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-block-start: 6px;
+}
+
+%button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  block-size: 42px;
+  padding-inline: 14px 18px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  @include pressable(1.04);
+
+  svg {
+    font-size: 1.125rem;
+  }
+}
+
+.primary {
+  @extend %button;
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.secondary {
+  @extend %button;
+  background-color: var(--color-fill);
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+  }
+}
+
+.details {
+  inline-size: 100%;
+  margin-block-start: 8px;
+  font-size: 0.8125rem;
+  color: var(--color-text-tertiary);
+  text-align: start;
+
+  summary {
+    cursor: pointer;
+    text-align: center;
+  }
+
+  pre {
+    margin-block-start: 8px;
+    padding: 12px;
+    border-radius: calc(var(--radius-xl) - 24px);
+    background-color: var(--color-fill);
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}

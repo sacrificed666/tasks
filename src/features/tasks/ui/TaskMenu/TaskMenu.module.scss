@@ -1,0 +1,120 @@
+@use "@/shared/styles/mixins" as *;
+@use "@/shared/styles/menu" as *;
+
+.menu {
+  inline-size: min(18rem, calc(100vw - 16px));
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+.caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 10px 2px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+
+  span {
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--color-text-secondary);
+  }
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 2px;
+  padding: 2px;
+}
+
+.date {
+  display: grid;
+  place-items: center;
+  block-size: 40px;
+  border-radius: calc(var(--radius-in-menu) - 2px);
+  color: var(--color-text-secondary);
+  font-size: 1.1875rem;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+  @include pressable(0.92);
+
+  @include hover {
+    background-color: var(--color-fill);
+    color: var(--color-text);
+  }
+
+  &[aria-checked="true"] {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-bright);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+.separator {
+  border: 0;
+  @include menu-separator;
+}
+
+.item {
+  @include menu-option;
+
+  &[data-tone="danger"] {
+    color: var(--color-danger);
+
+    .icon {
+      color: inherit;
+    }
+
+    @include hover {
+      background-color: var(--color-danger-soft);
+    }
+  }
+}
+
+.icon {
+  flex: none;
+  inline-size: 20px;
+  font-size: 1.0625rem;
+  color: var(--color-text-secondary);
+}
+
+.label {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron,
+.check {
+  flex: none;
+  font-size: 1rem;
+  color: var(--color-text-tertiary);
+}
+
+.check {
+  color: var(--color-accent-bright);
+}
+
+.back {
+  @include menu-option;
+  color: var(--color-accent-bright);
+  font-weight: 600;
+
+  .icon {
+    color: inherit;
+  }
+}

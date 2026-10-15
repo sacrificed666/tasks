@@ -1,0 +1,288 @@
+@use "sass:list";
+@use "@/shared/styles/mixins" as *;
+@use "@/shared/styles/palettes" as *;
+
+.dialog {
+  inline-size: min(34rem, calc(100vw - 24px));
+}
+
+// Sections sit 16px inside the sheet, their contents 12px inside the sections
+.content {
+  --section-radius: calc(var(--radius-sheet) - 16px);
+  --section-inner-radius: calc(var(--section-radius) - 12px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px;
+}
+
+.head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px 6px 28px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--section-radius);
+  background-color: var(--color-fill);
+
+  & + & {
+    margin-block-start: 4px;
+  }
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.sectionIcon {
+  font-size: 1rem;
+  color: var(--color-accent-bright);
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+// A fieldset without its default frame
+.group {
+  container-type: inline-size;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  > legend {
+    margin-block-end: 10px;
+    padding: 0;
+  }
+}
+
+.label {
+  margin-block-start: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.value {
+  font-size: 0.8125rem;
+  color: var(--color-text-tertiary);
+}
+
+.backdrops {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+
+  // Two backgrounds in a row on small phones
+  @include below(xs) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.backdrop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+
+  &:has(:focus-visible) .preview {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+.preview {
+  forced-color-adjust: none;
+  position: relative;
+  display: block;
+  block-size: 64px;
+  overflow: hidden;
+  border-radius: var(--section-inner-radius);
+  background-color: var(--color-backdrop);
+  box-shadow: inset 0 0 0 1px var(--color-separator);
+  transition:
+    box-shadow var(--duration-fast) var(--ease-out),
+    scale var(--duration-slow) var(--ease-bounce);
+
+  .backdrop:hover & {
+    scale: 1.03;
+  }
+
+  .backdrop:has(:checked) & {
+    box-shadow:
+      0 0 0 2px var(--glass-tint-strong),
+      0 0 0 4px var(--color-accent);
+  }
+
+  &[data-preview="aurora"] {
+    background-image:
+      radial-gradient(circle at 22% 30%, var(--accent-orb-1), transparent 55%),
+      radial-gradient(circle at 82% 18%, var(--accent-orb-2), transparent 50%),
+      radial-gradient(circle at 72% 92%, var(--accent-orb-3), transparent 55%),
+      radial-gradient(circle at 8% 96%, var(--accent-orb-4), transparent 50%);
+  }
+
+  @each $name, $orbs in $backdrops {
+    &[data-preview="#{$name}"] {
+      background-image:
+        radial-gradient(circle at 22% 30%, list.nth($orbs, 1), transparent 55%),
+        radial-gradient(circle at 82% 18%, list.nth($orbs, 2), transparent 50%),
+        radial-gradient(circle at 72% 92%, list.nth($orbs, 3), transparent 55%),
+        radial-gradient(circle at 8% 96%, list.nth($orbs, 4), transparent 50%);
+    }
+  }
+
+  &[data-preview="nebula"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12px 14px, var(--star-color), transparent),
+      radial-gradient(1px 1px at 46px 40px, var(--star-color), transparent),
+      radial-gradient(1px 1px at 70px 18px, var(--star-color), transparent),
+      radial-gradient(1px 1px at 28px 52px, var(--star-color), transparent);
+    background-size: 90px 64px;
+  }
+
+  &[data-preview="plain"] {
+    background-image: radial-gradient(
+      120% 90% at 10% 0%,
+      color-mix(in srgb, var(--color-accent) 22%, transparent),
+      transparent 65%
+    );
+  }
+}
+
+// 9px inside the preview, so a quarter of its radius
+.previewSidebar,
+.previewCard {
+  position: absolute;
+  border-radius: 4px;
+  background-color: rgb(255 255 255 / 22%);
+  box-shadow: 0 2px 6px -2px rgb(0 0 0 / 25%);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+
+  // The preview stays flat with reduced effects
+  :root[data-effects="reduced"] & {
+    background-color: rgb(255 255 255 / 40%);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.previewSidebar {
+  inset: 9px auto 9px 9px;
+  inline-size: 22%;
+}
+
+.previewCard {
+  inset: 9px 9px auto calc(22% + 16px);
+  block-size: 25px;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 75%), rgb(255 255 255 / 75%)),
+    linear-gradient(rgb(255 255 255 / 45%), rgb(255 255 255 / 45%));
+  background-position:
+    8px 8px,
+    8px 14px;
+  background-size:
+    48% 3px,
+    30% 3px;
+  background-repeat: no-repeat;
+}
+
+.backdropName {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-text-secondary);
+
+  .backdrop:has(:checked) & {
+    color: var(--color-text);
+  }
+}
+
+.languages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+
+  // One column where two would cut the longer names
+  @container (width < 18rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.language {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 42px;
+  padding-inline: 8px 6px;
+  border-radius: var(--section-inner-radius);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  &:has(:checked) {
+    background-color: var(--color-accent-soft);
+    font-weight: 600;
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+}
+
+.languageName {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Only the chosen language makes room for its check mark
+.languageCheck {
+  display: none;
+  flex: none;
+  font-size: 1rem;
+  color: var(--color-accent-bright);
+
+  .language:has(:checked) & {
+    display: block;
+  }
+}

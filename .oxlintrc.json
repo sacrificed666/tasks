@@ -1,0 +1,192 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // Built-in plugins, plus the local rule for short comments
+  "plugins": ["typescript", "react", "jsx-a11y", "import", "unicorn", "oxc", "vitest"],
+  "jsPlugins": ["./lint/comments.js"],
+  // Whole categories as errors
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
+  },
+  // Type-aware rules through tsgolint
+  "options": {
+    "typeAware": true
+  },
+  // Browser globals; Node.js globals only where an override adds them
+  "env": {
+    "browser": true,
+    "es2024": true
+  },
+  // Build output, reports and generated files
+  "ignorePatterns": ["dist", "dev-dist", "coverage", "playwright-report", "test-results"],
+  // Rules beyond the categories
+  "rules": {
+    "local/short-comments": "error",
+    "local/require-comments": "error",
+    "eqeqeq": "error",
+    "no-console": "error",
+    "prefer-const": "error",
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ],
+    "import/no-cycle": "error",
+    "import/no-duplicates": "error",
+    "import/no-self-import": "error",
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.scss", "@testing-library/jest-dom/vitest", "@fontsource-variable/*"]
+      }
+    ],
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/only-export-components": [
+      "error",
+      {
+        "allowConstantExport": true
+      }
+    ],
+    "react/button-has-type": "error",
+    "react/jsx-key": "error",
+    "react/jsx-no-useless-fragment": "error",
+    "react/self-closing-comp": "error",
+    "react/no-array-index-key": "error",
+    "react/purity": "error",
+    "react/refs": "error",
+    "react/immutability": "error",
+    "react/set-state-in-effect": "error",
+    "react/set-state-in-render": "error",
+    "react/static-components": "error",
+    "react/globals": "error",
+    "react/use-memo": "error",
+    "react/unsupported-syntax": "error",
+    "react/incompatible-library": "error",
+    "react/preserve-manual-memoization": "error",
+    "react/no-deriving-state-in-effects": "error",
+    "typescript/consistent-type-imports": "error",
+    "typescript/consistent-type-definitions": ["error", "interface"],
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/await-thenable": "error",
+    "typescript/switch-exhaustiveness-check": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-unnecessary-condition": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/prefer-optional-chain": "error",
+    "typescript/restrict-template-expressions": "error",
+    "unicorn/prefer-node-protocol": "error",
+    "unicorn/prefer-at": "error",
+    "unicorn/prefer-string-replace-all": "error",
+    "unicorn/no-useless-undefined": "error",
+    "unicorn/prefer-structured-clone": "error",
+    "vitest/no-focused-tests": "error",
+    "vitest/no-disabled-tests": "error",
+    "vitest/no-identical-title": "error",
+    "vitest/prefer-to-be": "error",
+    "vitest/prefer-to-have-length": "error",
+    "vitest/valid-title": "error",
+    "react/react-in-jsx-scope": "off",
+    "typescript/consistent-return": "off"
+  },
+  // Exceptions and layer boundaries for parts of the code
+  "overrides": [
+    // Node.js globals for configs, scripts and tests
+    {
+      "files": ["vite.config.ts", "vitest.config.ts", "lint/**", "scripts/**", "playwright.config.ts", "e2e/**"],
+      "env": {
+        "node": true
+      }
+    },
+    // Shared code imports nothing above it
+    {
+      "files": ["src/shared/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**", "@/features/**", "@/widgets/**"],
+                "message": "Shared code must not depend on the app, features or widgets layers."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    // Features never import routes or widgets
+    {
+      "files": ["src/features/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/widgets/**"],
+                "message": "Features must not depend on widgets."
+              },
+              {
+                "group": ["@/app/**", "!@/app/hooks", "!@/app/store"],
+                "message": "Only the typed hooks and store types may be imported from the app layer."
+              }
+            ],
+            "paths": [
+              {
+                "name": "@/app/store",
+                "allowTypeImports": true,
+                "message": "Import only types from the app store."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    // Widgets never import routes
+    {
+      "files": ["src/widgets/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**", "!@/app/hooks", "!@/app/store"],
+                "message": "Only the typed hooks and store types may be imported from the app layer."
+              }
+            ],
+            "paths": [
+              {
+                "name": "@/app/store",
+                "allowTypeImports": true,
+                "message": "Import only types from the app store."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    // Tests may assert, mock and reach across layers
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "src/test/**"],
+      "rules": {
+        "typescript/no-non-null-assertion": "off",
+        "typescript/no-unnecessary-condition": "off",
+        "no-restricted-imports": "off"
+      }
+    },
+    // The palette is an ARIA combobox, which has no native element
+    {
+      "files": ["src/features/commands/ui/CommandPalette/**"],
+      "rules": {
+        "jsx-a11y/prefer-tag-over-role": "off"
+      }
+    }
+  ]
+}

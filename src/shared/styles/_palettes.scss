@@ -1,0 +1,145 @@
+$accents: (
+  "blue": (
+    dark: #0a84ff,
+    light: #007aff,
+    orbs: (
+      #2f6bff,
+      #1fb5e6,
+      #6a5cff,
+      #19c3b3,
+      #3a8dff,
+    ),
+  ),
+  "indigo": (
+    dark: #6e6cf0,
+    light: #5856d6,
+    orbs: (
+      #5e5ce6,
+      #8b5cf6,
+      #3b82f6,
+      #22d3ee,
+      #6366f1,
+    ),
+  ),
+  "violet": (
+    dark: #8b6cff,
+    light: #7b5cf0,
+    orbs: (
+      #7a5cff,
+      #ff4f93,
+      #ff9f45,
+      #1fd1c2,
+      #3f6bff,
+    ),
+  ),
+  "pink": (
+    dark: #ff5fa2,
+    light: #e0448a,
+    orbs: (
+      #ff5fa2,
+      #c084fc,
+      #ff8fab,
+      #f472b6,
+      #a855f7,
+    ),
+  ),
+  "rose": (
+    dark: #ff4d6d,
+    light: #e0334f,
+    orbs: (
+      #ff4d6d,
+      #ff8a5c,
+      #f43f5e,
+      #fb7185,
+      #c026d3,
+    ),
+  ),
+  "sunset": (
+    dark: #ff6b3d,
+    light: #ef5a2a,
+    orbs: (
+      #ff6a3d,
+      #ff4f7b,
+      #ffb347,
+      #d9467c,
+      #ff8a5c,
+    ),
+  ),
+  "amber": (
+    dark: #ffb020,
+    light: #b06e00,
+    on-dark: #231700,
+    orbs: (
+      #ffb020,
+      #ff8a3d,
+      #facc15,
+      #f59e0b,
+      #fb7185,
+    ),
+  ),
+  "forest": (
+    dark: #22b35e,
+    light: #18914b,
+    orbs: (
+      #22c55e,
+      #14b8a6,
+      #84cc16,
+      #0ea5e9,
+      #16a34a,
+    ),
+  ),
+  "mint": (
+    dark: #2dd4bf,
+    light: #0d8a7c,
+    on-dark: #002a26,
+    orbs: (
+      #2dd4bf,
+      #22d3ee,
+      #34d399,
+      #0ea5e9,
+      #14b8a6,
+    ),
+  ),
+  "graphite": (
+    dark: #8a93a6,
+    light: #4b5566,
+    orbs: (
+      #64748b,
+      #94a3b8,
+      #475569,
+      #cbd5e1,
+      #334155,
+    ),
+  ),
+);
+
+$backdrops: (
+  "spectrum": (
+    #ff4f93,
+    #ffb020,
+    #22c55e,
+    #1fb5e6,
+    #8b5cf6,
+  ),
+  "sunset": (
+    #ff6a3d,
+    #ff4f7b,
+    #ffb347,
+    #c2416c,
+    #7c3aed,
+  ),
+  "ocean": (
+    #0ea5e9,
+    #14b8a6,
+    #2563eb,
+    #22d3ee,
+    #0f766e,
+  ),
+  "nebula": (
+    #7c3aed,
+    #db2777,
+    #4f46e5,
+    #a855f7,
+    #0891b2,
+  ),
+);

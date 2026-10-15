@@ -1,0 +1,53 @@
+@use "@/shared/styles/mixins" as *;
+
+.main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-inline-size: 0;
+  padding-block-start: 10px;
+
+  // No top padding under the toolbar on phones
+  @include below(lg) {
+    padding-block-start: 0;
+  }
+}
+
+.main:focus {
+  outline: none;
+}
+
+// The list follows a sideways swipe a little and settles back when it ends
+.main {
+  transition: translate var(--duration-base) var(--ease-out);
+
+  &[data-page-swiping] {
+    translate: var(--page-swipe, 0) 0;
+    transition: none;
+  }
+
+  &[data-page-enter="next"] {
+    animation: enter-from-end var(--duration-base) var(--ease-out);
+  }
+
+  &[data-page-enter="previous"] {
+    animation: enter-from-start var(--duration-base) var(--ease-out);
+  }
+}
+
+// The next list comes in from the side the finger moved away from
+@keyframes enter-from-end {
+  from {
+    opacity: 0;
+    translate: 32px 0;
+  }
+}
+
+// The previous list comes in from the other side
+@keyframes enter-from-start {
+  from {
+    opacity: 0;
+    translate: -32px 0;
+  }
+}

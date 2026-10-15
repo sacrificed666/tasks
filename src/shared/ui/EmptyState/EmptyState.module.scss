@@ -1,0 +1,61 @@
+@use "@/shared/styles/mixins" as *;
+
+.empty {
+  @include glass(var(--radius-xl), $content: true);
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 44px 24px;
+  text-align: center;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    scale var(--duration-slow) var(--ease-spring);
+
+  @starting-style {
+    opacity: 0;
+    scale: 0.96;
+  }
+
+  &[data-compact] {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+    gap: 2px 14px;
+    padding: 16px 20px;
+    text-align: start;
+  }
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  inline-size: 60px;
+  block-size: 60px;
+  margin-block-end: 10px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-soft);
+  box-shadow: var(--glass-edge);
+  font-size: 1.75rem;
+  color: var(--color-accent-bright);
+
+  .empty[data-compact] & {
+    grid-row: span 2;
+    inline-size: 44px;
+    block-size: 44px;
+    margin: 0;
+    font-size: 1.375rem;
+    background-color: color-mix(in srgb, var(--color-success) 18%, transparent);
+    color: var(--color-success);
+  }
+}
+
+.title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.description {
+  max-inline-size: 26rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}

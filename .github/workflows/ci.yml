@@ -1,0 +1,271 @@
+name: 🚀 Tasks | CI/CD
+
+# Every push and pull request on the long-lived branches, or by hand
+on:
+  push:
+    branches: ["main", "staging", "development"]
+  pull_request:
+    branches: ["main", "staging", "development"]
+  workflow_dispatch:
+
+# A read-only token unless a job asks for more
+permissions:
+  contents: read
+
+# One run per branch; a new push to a pull request cancels the older one
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  verify:
+    name: 🔍 Verify | Lint, format, types and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 📥 Git | Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 🟢 Node | Set up environment
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: 📦 NPM | Install dependencies
+        run: npm ci
+
+      - name: 🔏 NPM | Verify registry signatures
+        run: npm audit signatures
+
+      - name: 🏷️ Release | Check the version and its changelog entry
+        run: node scripts/release-notes.mjs > /dev/null
+
+      - name: 🧹 Oxlint | Lint code
+        run: npm run lint -- --format github
+
+      - name: 🧾 Text | No em or en dashes
+        run: npm run lint:text
+
+      - name: 🎨 Oxfmt | Check formatting
+        run: npm run format:check
+
+      - name: 🧠 TypeScript | Check types
+        run: npm run typecheck
+
+      - name: 🧪 Vitest | Run tests with coverage
+        run: npm run test:coverage
+
+      - name: 📊 Coverage | Publish summary
+        if: ${{ !cancelled() && hashFiles('coverage/coverage-summary.json') != '' }}
+        run: node scripts/coverage-summary.mjs >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 📤 Coverage | Upload report
+        if: ${{ !cancelled() && hashFiles('coverage/index.html') != '' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-report
+          path: coverage
+          retention-days: 7
+
+  build:
+    name: 🛠️ Build | Bundle application
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 📥 Git | Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 🟢 Node | Set up environment
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: 📦 NPM | Install dependencies
+        run: npm ci
+
+      - name: 🛠️ Vite | Build project
+        run: npm run build
+
+      - name: 📏 Build | Verify output and report bundle size
+        run: node scripts/build-report.mjs >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 📤 Build | Upload the bundle for the browser tests
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist
+          include-hidden-files: true
+          retention-days: 1
+
+      - name: 📤 Build | Upload the site of staging and development
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/development')
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site-${{ github.ref_name }}
+          path: dist
+          include-hidden-files: true
+          retention-days: 14
+
+      - name: ⚙️ Pages | Configure GitHub Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: 📤 Pages | Upload build artifact
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: ./dist
+          include-hidden-files: true
+
+  e2e:
+    name: 🎭 E2E | ${{ matrix.name }}
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Chromium with Lighthouse and WebKit run side by side
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Chromium, accessibility and Lighthouse
+            browser: chromium
+            project: lighthouse
+          - name: WebKit
+            browser: webkit
+            project: webkit
+    steps:
+      - name: 📥 Git | Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 🟢 Node | Set up environment
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: 📦 NPM | Install dependencies
+        run: npm ci
+
+      - name: 📥 Build | Download the bundle of the build job
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist
+          path: dist
+
+      - name: 🎭 Playwright | Read version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: 🗃️ Playwright | Cache the browser
+        id: browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-${{ matrix.browser }}
+
+      - name: 🎭 Playwright | Install the browser
+        if: steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps "$BROWSER"
+        env:
+          BROWSER: ${{ matrix.browser }}
+
+      - name: 🧩 Playwright | Install system dependencies
+        if: steps.browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps "$BROWSER"
+        env:
+          BROWSER: ${{ matrix.browser }}
+
+      - name: 🧪 Playwright | Run against the production build
+        run: npm run test:e2e -- --project="$PROJECT"
+        env:
+          E2E_PREBUILT: "true"
+          PROJECT: ${{ matrix.project }}
+
+      - name: 📤 Playwright | Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: playwright-report
+          retention-days: 7
+
+  docker:
+    name: 🐳 Docker | Build and start the runtime image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: 📥 Git | Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 🧱 Docker | Set up Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: 🐳 Docker | Build the staging image without secrets
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: runtime
+          build-args: APP_ENV=staging
+          tags: app:ci
+          load: true
+          cache-from: type=gha,scope=runtime
+          cache-to: type=gha,scope=runtime,mode=max
+
+      - name: 🩺 Docker | Check that the container answers
+        run: |
+          docker run --detach --name app --env APP_ENV=staging --publish 8080:8080 app:ci
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --output /dev/null http://localhost:8080/healthz; then exit 0; fi
+            sleep 1
+          done
+          docker logs app
+          exit 1
+
+  # Pull requests only: new dependencies with known advisories fail
+  dependency-review:
+    name: 🛡️ Security | Review dependency changes
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Git | Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 🛡️ GitHub | Review dependencies
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+
+  # main only: publishes the tested build to GitHub Pages
+  deploy:
+    name: 🚀 Deploy | Publish to GitHub Pages
+    needs: [verify, build, e2e]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: 🚀 Pages | Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

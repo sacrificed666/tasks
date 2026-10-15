@@ -1,0 +1,128 @@
+@use "@/shared/styles/mixins" as *;
+
+.bar {
+  @include glass(var(--radius-full), var(--glass-tint-strong), var(--glass-blur-thick));
+  --inset: 5px;
+  --segment: calc((100% - 2 * var(--inset)) / var(--count));
+  position: fixed;
+  inset-inline: max(env(safe-area-inset-left), 12px) max(env(safe-area-inset-right), 12px);
+  inset-block-end: max(env(safe-area-inset-bottom), 12px);
+  z-index: 60;
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  max-inline-size: 30rem;
+  margin-inline: auto;
+  padding: var(--inset);
+  box-shadow: var(--glass-shadow-lifted), var(--glass-edge);
+
+  @include hide-in-print;
+}
+
+.indicator {
+  @include glass(var(--radius-full), var(--glass-tint-pressed));
+  position: absolute;
+  inset-block: var(--inset);
+  left: calc(var(--inset) + var(--index) * var(--segment));
+  right: calc(var(--inset) + (var(--count) - var(--index) - 1) * var(--segment));
+  z-index: 0;
+  box-shadow:
+    0 4px 14px -6px var(--color-shade),
+    var(--glass-edge);
+  transition:
+    left var(--duration-slow) var(--ease-spring),
+    right var(--duration-slow) var(--ease-spring),
+    opacity var(--duration-base) var(--ease-out);
+
+  .bar[data-idle] & {
+    opacity: 0;
+  }
+}
+
+.tab {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-inline-size: 0;
+  padding-block: 7px 6px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  @include pressable(0.92);
+
+  &[aria-current="page"] {
+    color: var(--color-text);
+  }
+
+  &:focus-visible {
+    outline-offset: -3px;
+  }
+}
+
+.icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-size: 1.375rem;
+  transition: color var(--duration-base) var(--ease-out);
+
+  .tab[aria-current="page"] & {
+    color: var(--tone);
+  }
+
+  .tab[data-tone="all"] & {
+    --tone: var(--tone-all);
+  }
+
+  .tab[data-tone="today"] & {
+    --tone: var(--tone-today);
+  }
+
+  .tab[data-tone="upcoming"] & {
+    --tone: var(--tone-upcoming);
+  }
+
+  .tab[data-tone="important"] & {
+    --tone: var(--tone-important);
+  }
+
+  .tab[data-tone="completed"] & {
+    --tone: var(--tone-completed);
+  }
+
+  .tab[data-tone="lists"] & {
+    --tone: var(--color-accent-bright);
+  }
+}
+
+.badge {
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-end: -11px;
+  min-inline-size: 17px;
+  padding: 1px 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--glass-tint-strong);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-on-accent);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+
+  &[data-alert] {
+    background-color: var(--color-danger);
+  }
+}
+
+.label {
+  order: 1;
+  max-inline-size: 100%;
+  overflow: hidden;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

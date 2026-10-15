@@ -1,0 +1,125 @@
+@use "@/shared/styles/mixins" as *;
+
+// A fieldset without its default frame
+.control {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+// The visible name of the group, as in the settings
+.legend {
+  margin-block: 6px 10px;
+  padding: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+// A capsule, like the buttons it holds
+.track {
+  --inset: 3px;
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  box-shadow: inset 0 1px 2px var(--color-shade);
+  --segment: calc((100% - 2 * var(--inset)) / var(--count));
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  block-size: 42px;
+  padding: var(--inset);
+
+  // A plain border in forced colours mode
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+  }
+}
+
+.indicator {
+  position: absolute;
+  border-radius: var(--radius-full);
+  background-color: var(--glass-tint-pressed);
+  inset-block: var(--inset);
+  left: calc(var(--inset) + var(--index) * var(--segment));
+  right: calc(var(--inset) + (var(--count) - var(--index) - 1) * var(--segment));
+  z-index: 0;
+  box-shadow:
+    0 2px 8px -2px var(--color-shade),
+    inset 0 1px 0 rgb(255 255 255 / 14%);
+  transition:
+    left var(--duration-slow) var(--ease-spring),
+    right var(--duration-slow) var(--ease-spring);
+}
+
+.track[data-direction="forward"] .indicator {
+  transition-delay: 70ms, 0ms;
+}
+
+.track[data-direction="backward"] .indicator {
+  transition-delay: 0ms, 70ms;
+}
+
+.option {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-inline-size: 0;
+  padding-inline: 10px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--duration-base) var(--ease-out);
+
+  @include hover {
+    color: var(--color-text);
+  }
+
+  &[data-selected] {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
+  // Tighter on a narrow control, so longer words still fit
+  @container (width < 20rem) {
+    padding-inline: 4px;
+    font-size: 0.875rem;
+  }
+}
+
+.input {
+  @include visually-hidden;
+}
+
+.icon {
+  flex: none;
+  font-size: 1rem;
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.description {
+  color: var(--color-text-tertiary);
+  font-size: 0.8125rem;
+}

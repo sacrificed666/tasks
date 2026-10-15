@@ -1,0 +1,71 @@
+@use "@/shared/styles/mixins" as *;
+
+// A fieldset without its default frame, laid out as a grid
+.swatches {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  justify-items: center;
+  gap: 4px;
+
+  // Two rows of swatches on small phones
+  @include below(sm) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    row-gap: 8px;
+  }
+}
+
+.swatch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: min(40px, 100%);
+  aspect-ratio: 1;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 1px;
+  }
+}
+
+.dot {
+  forced-color-adjust: none;
+  display: grid;
+  place-items: center;
+  inline-size: 30px;
+  block-size: 30px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle at 30% 25%, rgb(255 255 255 / 45%), transparent 55%), var(--swatch);
+  box-shadow:
+    0 4px 12px -4px var(--swatch),
+    inset 0 1px 0 rgb(255 255 255 / 35%);
+  color: #ffffff;
+  transition: scale var(--duration-slow) var(--ease-bounce);
+
+  .swatch:hover & {
+    scale: 1.08;
+  }
+
+  .swatch:has(:checked) & {
+    box-shadow:
+      0 0 0 3px var(--glass-tint-strong),
+      0 0 0 5px var(--swatch),
+      inset 0 1px 0 rgb(255 255 255 / 35%);
+  }
+}
+
+.check {
+  font-size: 0.9375rem;
+  opacity: 0;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 25%));
+  transition: opacity var(--duration-fast) var(--ease-out);
+
+  .swatch:has(:checked) & {
+    opacity: 1;
+  }
+}

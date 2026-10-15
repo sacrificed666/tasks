@@ -1,0 +1,33 @@
+# Keeps the build context small and free of secrets
+
+# Version control and CI
+.git
+.github
+
+# Dependencies and build output, made again inside the image
+dist
+dev-dist
+node_modules
+
+# Test reports
+coverage
+playwright-report
+test-results
+blob-report
+lighthouse-live
+
+# Docs and the Docker setup, except the nginx config the image serves with
+docs
+docker
+!docker/nginx.conf
+compose.yaml
+Makefile
+
+# Environment files; only the example may enter
+.env
+.env.*
+!.env.example
+
+# Logs and system files
+*.log
+.DS_Store

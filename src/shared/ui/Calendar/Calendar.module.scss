@@ -1,0 +1,115 @@
+@use "@/shared/styles/mixins" as *;
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 4px 4px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-inline-start: 6px;
+}
+
+.month {
+  flex: 1;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.grid {
+  inline-size: 100%;
+  border-collapse: separate;
+  border-spacing: 2px;
+  table-layout: fixed;
+}
+
+.weekday {
+  padding-block: 4px 2px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  max-block-size: 38px;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+  @include pressable(0.9);
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+  }
+
+  &[data-outside] {
+    color: var(--color-text-tertiary);
+  }
+
+  &[data-past]:not([aria-pressed="true"]) {
+    color: var(--color-text-tertiary);
+    opacity: 0.75;
+  }
+
+  &[aria-current="date"] {
+    color: var(--color-accent-bright);
+    font-weight: 700;
+  }
+
+  &[aria-pressed="true"] {
+    background-color: var(--color-accent);
+    box-shadow: 0 6px 16px -8px var(--color-accent-glow);
+    color: var(--color-on-accent);
+    font-weight: 700;
+  }
+
+  &:focus-visible {
+    outline-offset: 0;
+  }
+
+  // Today is underlined in forced colours mode
+  @media (forced-colors: active) {
+    &[aria-current="date"] {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
+.mark {
+  position: absolute;
+  inset-block-end: 4px;
+  inset-inline-start: 50%;
+  inline-size: 4px;
+  block-size: 4px;
+  margin-inline-start: -2px;
+  border-radius: var(--radius-full);
+  background-color: currentColor;
+  opacity: 0.55;
+
+  &[data-many] {
+    inline-size: 10px;
+    margin-inline-start: -5px;
+  }
+
+  .day:not([aria-pressed="true"]) & {
+    background-color: var(--color-accent-bright);
+    opacity: 0.9;
+  }
+}

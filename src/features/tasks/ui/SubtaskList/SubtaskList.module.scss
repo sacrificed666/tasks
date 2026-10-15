@@ -1,0 +1,154 @@
+@use "@/shared/styles/mixins" as *;
+
+.subtasks {
+  display: grid;
+  gap: 6px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.progress {
+  margin-inline-start: auto;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  font-variant-numeric: tabular-nums;
+
+  &[data-done] {
+    background-color: var(--color-success-soft);
+    color: var(--color-success);
+  }
+}
+
+.list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 40px;
+  padding-inline: 8px 2px;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  // One ring around the row while its title is edited, like the add field
+  &:has(.input:focus-visible) {
+    background-color: var(--color-fill);
+    box-shadow: inset 0 0 0 2px var(--color-focus);
+  }
+
+  &[data-dragging] {
+    z-index: 1;
+    background-color: var(--color-fill-strong);
+    box-shadow: var(--glass-shadow);
+  }
+}
+
+.input {
+  flex: 1;
+  min-inline-size: 0;
+  padding-block: 6px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: color var(--duration-base) var(--ease-out);
+
+  // The row or the add field draws the ring instead
+  &:focus-visible {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  .row[data-done] & {
+    color: var(--color-text-tertiary);
+    text-decoration: line-through;
+  }
+}
+
+.handle,
+.remove {
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+
+  .row:hover &,
+  .row:focus-within & {
+    opacity: 1;
+  }
+
+  // Buttons stay visible without hover
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
+.handle {
+  display: grid;
+  place-items: center;
+  inline-size: 20px;
+  block-size: 28px;
+  color: var(--color-text-tertiary);
+  cursor: grab;
+  touch-action: none;
+
+  .row[data-dragging] & {
+    cursor: grabbing;
+  }
+}
+
+.addField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 40px;
+  padding-inline: 10px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-fill);
+  box-shadow: inset 0 0 0 1px var(--color-separator);
+  cursor: text;
+
+  &:focus-within {
+    box-shadow: inset 0 0 0 2px var(--color-focus);
+  }
+}
+
+.addIcon {
+  flex: none;
+  color: var(--color-text-tertiary);
+}
+
+// Focused fields are outlined in forced colours mode
+@media (forced-colors: active) {
+  .row:has(.input:focus-visible),
+  .addField:focus-within {
+    outline: 2px solid Highlight;
+  }
+}

@@ -1,0 +1,97 @@
+@use "@/shared/styles/mixins" as *;
+
+.button {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  @include pressable(1.08);
+
+  &:disabled {
+    opacity: 0.38;
+  }
+}
+
+.medium {
+  inline-size: 44px;
+  block-size: 44px;
+  font-size: 1.25rem;
+}
+
+.small {
+  inline-size: 34px;
+  block-size: 34px;
+  font-size: 1.0625rem;
+
+  // Larger targets for fingers
+  @media (pointer: coarse) {
+    inline-size: 40px;
+    block-size: 40px;
+  }
+}
+
+.glass {
+  @include glass(var(--radius-full));
+
+  @include hover {
+    background-color: var(--glass-tint-hover);
+    --light-strength: 0.18;
+  }
+
+  &:active:not(:disabled),
+  &[aria-expanded="true"],
+  &[aria-pressed="true"] {
+    background-color: var(--glass-tint-pressed);
+  }
+}
+
+.ghost {
+  color: var(--color-text-secondary);
+
+  @include hover {
+    color: var(--color-text);
+    background-color: var(--color-fill);
+  }
+
+  &:active:not(:disabled),
+  &[aria-expanded="true"] {
+    color: var(--color-text);
+    background-color: var(--color-fill-strong);
+  }
+}
+
+.accent {
+  @include glass(var(--radius-full), var(--glass-tint-accent));
+  color: var(--color-on-accent);
+  box-shadow:
+    0 6px 18px -6px var(--color-accent-glow),
+    var(--glass-edge);
+
+  @include hover {
+    --light-strength: 0.35;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    box-shadow: var(--glass-edge);
+  }
+}
+
+.danger {
+  color: var(--color-text-secondary);
+
+  @include hover {
+    color: var(--color-danger);
+    background-color: var(--color-danger-soft);
+  }
+
+  &:active:not(:disabled) {
+    color: var(--color-danger);
+    background-color: var(--color-danger-soft);
+  }
+}
+
+.icon {
+  display: block;
+}

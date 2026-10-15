@@ -1,0 +1,31 @@
+@use "@/shared/styles/mixins" as *;
+
+.panel {
+  @include glass(var(--radius-sheet), var(--glass-tint-strong), var(--glass-blur-thick));
+  display: flex;
+  flex-direction: column;
+  max-block-size: calc(100dvh - 32px);
+  overflow: hidden;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    translate var(--duration-slow) var(--ease-spring);
+
+  @starting-style {
+    opacity: 0;
+    translate: 12px 0;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+// Only up and down: nothing inside may push the panel sideways
+.body {
+  min-block-size: 0;
+  overflow-x: clip;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}

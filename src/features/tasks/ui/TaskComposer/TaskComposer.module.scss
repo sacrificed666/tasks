@@ -1,0 +1,122 @@
+@use "@/shared/styles/mixins" as *;
+
+// A capsule: the 44px send button sits 8px in, so the corners are 22 + 8
+.composer {
+  @include glass(30px, var(--glass-tint), var(--glass-blur-control));
+  container: composer / inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  min-block-size: 60px;
+  padding: 8px 8px 8px 18px;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+
+  &:focus-within {
+    background-color: var(--glass-tint-hover);
+  }
+
+  &:has(.input:focus-visible) {
+    box-shadow:
+      var(--glass-shadow),
+      var(--glass-edge),
+      0 0 0 2px var(--color-focus);
+  }
+
+  @include hide-in-print;
+}
+
+.leading {
+  font-size: 1.375rem;
+  color: var(--color-accent-bright);
+}
+
+.input {
+  flex: 1 1 7rem;
+  min-inline-size: 0;
+  block-size: 44px;
+  border: 0;
+  background: none;
+  font-size: 1.0625rem;
+  text-overflow: ellipsis;
+  outline: none;
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-inline-start: auto;
+}
+
+.star[aria-pressed="true"] {
+  color: var(--color-star);
+}
+
+.repeat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  block-size: 34px;
+  padding-inline: 10px 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-soft);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--color-accent-bright) 55%, transparent);
+  color: var(--color-accent-bright);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.repeatIcon {
+  font-size: 1.0625rem;
+}
+
+.submit {
+  flex: none;
+}
+
+// On a narrow composer the options get their own row while typing
+@container composer (max-width: 480px) {
+  .options {
+    display: none;
+    order: 1;
+    flex: 1 0 100%;
+    flex-wrap: wrap;
+    margin-inline-start: 0;
+    padding-inline-start: 32px;
+
+    .composer[data-engaged] & {
+      display: flex;
+      animation: reveal var(--duration-base) var(--ease-out);
+    }
+  }
+
+  .repeat {
+    inline-size: 34px;
+    padding: 0;
+    justify-content: center;
+
+    span {
+      display: none;
+    }
+  }
+}
+
+// The options slide in
+@keyframes reveal {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
