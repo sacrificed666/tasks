@@ -51,7 +51,7 @@ jobs:
   image:
     name: 🐳 Docker | Build the ${{ matrix.arch }} image
     needs: release
-    if: always() && (needs.release.result == 'success' || github.event_name == 'workflow_dispatch')
+    if: ${{ !cancelled() && (needs.release.result == 'success' || github.event_name == 'workflow_dispatch') }}
     strategy:
       matrix:
         include:
@@ -123,6 +123,8 @@ jobs:
   manifest:
     name: 🐳 Docker | Publish the image for amd64 and arm64
     needs: image
+    # A skipped release skips every later job unless it asks to run anyway
+    if: ${{ !cancelled() && needs.image.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
