@@ -1,0 +1,15 @@
+{
+  "files": [],
+  // One project each for the app, the Node.js configs and the browser tests
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.e2e.json"
+    }
+  ]
+}

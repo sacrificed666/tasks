@@ -1,0 +1,87 @@
+@use "@/shared/styles/mixins" as *;
+
+.trigger {
+  @include glass(var(--radius-full));
+  @include pressable(1.04);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  block-size: 40px;
+  padding-inline: 14px 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  @include hover {
+    background-color: var(--glass-tint-hover);
+    --light-strength: 0.16;
+  }
+
+  &[aria-expanded="true"] {
+    background-color: var(--glass-tint-pressed);
+  }
+
+  @include hide-in-print;
+}
+
+.icon,
+.chevron {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.chevron {
+  font-size: 0.875rem;
+}
+
+.value {
+  // Only the icon on small phones
+  @include below(sm) {
+    display: none;
+  }
+}
+
+.panel {
+  inline-size: min(14rem, calc(100vw - 24px));
+}
+
+.heading {
+  padding: 8px 12px 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  inline-size: 100%;
+  block-size: 42px;
+  padding-inline: 12px;
+  border-radius: var(--radius-in-popover);
+  font-size: 0.9375rem;
+  text-align: start;
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+.check {
+  font-size: 1.0625rem;
+  color: var(--color-accent-bright);
+  opacity: 0;
+
+  .option[aria-pressed="true"] & {
+    opacity: 1;
+  }
+}

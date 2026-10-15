@@ -1,0 +1,105 @@
+@use "@/shared/styles/mixins" as *;
+
+.panel {
+  inline-size: min(20rem, calc(100vw - 24px));
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+
+  & + & {
+    margin-block-start: 6px;
+    padding-block-start: 6px;
+    border-block-start: 1px solid var(--color-separator);
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  block-size: 44px;
+  padding-inline: 12px;
+  border-radius: var(--radius-in-popover);
+  font-size: 0.9375rem;
+  text-align: start;
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  @include hover {
+    background-color: var(--color-fill);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--color-fill-strong);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+  }
+}
+
+.icon {
+  flex: none;
+  font-size: 1.1875rem;
+  color: var(--color-text-secondary);
+}
+
+.label {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hint {
+  flex: none;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin-block-start: 6px;
+  padding: 12px 10px 6px;
+  border-block-start: 1px solid var(--color-separator);
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  dt {
+    display: flex;
+    gap: 2px;
+  }
+
+  kbd {
+    min-inline-size: 20px;
+    padding: 1px 5px;
+    border-radius: 6px;
+    background-color: var(--color-fill);
+    box-shadow: inset 0 -1px 0 var(--color-shade);
+    font-family: inherit;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--color-text-secondary);
+  }
+
+  // No shortcut hints on touch screens
+  @media (hover: none) and (pointer: coarse) {
+    display: none;
+  }
+}

@@ -1,0 +1,38 @@
+@use "@/shared/styles/mixins" as *;
+
+.frame {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  inline-size: 100%;
+  block-size: 100%;
+  padding-inline-end: 4px;
+  pointer-events: none;
+}
+
+.preview {
+  @include glass(var(--radius-full), var(--glass-tint-strong), var(--glass-blur-thick));
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-inline-size: 22rem;
+  block-size: 44px;
+  padding-inline: 18px 12px;
+  box-shadow: var(--glass-shadow-lifted), var(--glass-edge);
+  color: var(--color-text);
+  font-weight: 600;
+  cursor: grabbing;
+  rotate: -1.5deg;
+}
+
+.grip {
+  flex: none;
+  color: var(--color-text-tertiary);
+}
+
+.title {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

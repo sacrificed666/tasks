@@ -1,0 +1,85 @@
+@use "@/shared/styles/mixins" as *;
+
+// Nearly opaque, as the blur cannot see through the dialogs it opens over
+.popover {
+  @include glass(var(--radius-xl), var(--glass-tint-overlay), var(--glass-blur-thick));
+  position: fixed;
+  inset: auto;
+  inset-block-start: var(--popover-top, 72px);
+  inline-size: min(17.5rem, calc(100vw - 24px));
+  margin: 0;
+  padding: 6px;
+  border: 0;
+  overflow: visible;
+  outline: none;
+  color: var(--color-text);
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    scale var(--duration-slow) var(--ease-spring),
+    overlay var(--duration-base) allow-discrete,
+    display var(--duration-base) allow-discrete;
+
+  &:popover-open {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &[data-align="end"] {
+    inset-inline-end: var(--popover-right, 12px);
+    transform-origin: top right;
+  }
+
+  &[data-align="start"] {
+    inset-inline-start: var(--popover-left, 12px);
+    transform-origin: top left;
+  }
+
+  &:not(:popover-open) {
+    opacity: 0;
+    scale: 0.92;
+  }
+
+  @starting-style {
+    &:popover-open {
+      opacity: 0;
+      scale: 0.92;
+    }
+  }
+
+  &::backdrop {
+    background: transparent;
+  }
+
+  // Anchor positioning places the popover and flips it when a side lacks room
+  @supports (position-area: block-end) {
+    margin-block-start: 10px;
+    position-try-fallbacks:
+      flip-inline,
+      flip-block,
+      flip-block flip-inline;
+
+    &[data-align="end"] {
+      inset: auto;
+      position-area: block-end span-inline-start;
+    }
+
+    &[data-align="start"] {
+      inset: auto;
+      position-area: block-end span-inline-end;
+    }
+  }
+
+  // A plain border in forced colours mode
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+  }
+}
+
+.body {
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}

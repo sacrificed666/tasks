@@ -1,0 +1,486 @@
+@use "sass:list";
+@use "sass:map";
+@use "mixins" as *;
+@use "palettes" as *;
+
+// Typed properties so the glass effects can animate
+@property --glass-refraction {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --light-strength {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --light-x {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+
+@property --light-y {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 0%;
+}
+
+// Colours, glass and backdrop of the light appearance
+@mixin light-tokens {
+  color-scheme: light;
+
+  --color-backdrop: #e8edf6;
+  --color-surface: #f4f7fc;
+  --color-text: rgb(12 18 34 / 94%);
+  --color-text-secondary: rgb(30 41 66 / 76%);
+  --color-text-tertiary: rgb(30 41 66 / 68%);
+  --color-fill: rgb(20 32 64 / 6%);
+  --color-fill-strong: rgb(20 32 64 / 11%);
+  --color-shade: rgb(20 32 64 / 12%);
+  --color-separator: rgb(20 32 64 / 10%);
+  --color-danger: #c4281f;
+  --color-warning: #954d00;
+  --color-success: #17924f;
+  --color-star: #f08c00;
+  --color-on-accent: #ffffff;
+
+  --tone-all: #3d6bff;
+  --tone-today: #e89200;
+  --tone-upcoming: #e5484d;
+  --tone-important: #f08c00;
+  --tone-completed: #1f9d55;
+
+  --glass-tint: rgb(255 255 255 / 40%);
+  --glass-tint-hover: rgb(255 255 255 / 56%);
+  --glass-tint-pressed: rgb(255 255 255 / 70%);
+  --glass-tint-strong: rgb(248 250 255 / 74%);
+  --glass-tint-overlay: rgb(248 250 255 / 94%);
+  --glass-tint-content: rgb(250 252 255 / 68%);
+  --glass-tint-bar: rgb(246 249 255 / 58%);
+  --glass-saturate: 180%;
+  --glass-brightness: 1.06;
+  --glass-rim: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 95%) 0%,
+    rgb(255 255 255 / 45%) 30%,
+    rgb(255 255 255 / 20%) 60%,
+    rgb(255 255 255 / 70%) 100%
+  );
+  --glass-sheen: linear-gradient(180deg, rgb(255 255 255 / 45%) 0%, rgb(255 255 255 / 8%) 40%, transparent 65%);
+  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 80%), inset 0 -1px 1px rgb(255 255 255 / 30%);
+  --glass-shadow: 0 1px 2px rgb(20 32 64 / 8%), 0 10px 30px -12px rgb(20 32 64 / 24%);
+  --glass-shadow-lifted: 0 2px 6px rgb(20 32 64 / 10%), 0 24px 48px -16px rgb(20 32 64 / 34%);
+  --bar-shadow: 0 1px 0 rgb(20 32 64 / 8%), 0 12px 32px -24px rgb(20 32 64 / 40%);
+
+  --backdrop-base: linear-gradient(165deg, #f5f8fd 0%, #e6ecf6 55%, #edf0f9 100%);
+  --orb-opacity: 0.42;
+  --orb-opacity-rich: 0.42;
+  --orb-blend: normal;
+  --waves-filter: invert(1);
+  --waves-opacity: 0.45;
+  --grain-opacity: 0.18;
+  --star-color: rgb(40 48 96 / 45%);
+}
+
+// Dark appearance, fonts, radii, motion and layout by default
+:root {
+  color-scheme: dark;
+
+  --font-sans:
+    "Montserrat Variable", "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-sans);
+
+  --layout-width: 76rem;
+  --sidebar-width: 16.75rem;
+  --inspector-width: 20rem;
+  --tabbar-offset: 0px;
+  --titlebar-height: 0px;
+
+  --color-backdrop: #070a14;
+  --color-surface: #161b2c;
+  --color-text: rgb(244 247 255 / 96%);
+  --color-text-secondary: rgb(222 230 248 / 74%);
+  --color-text-tertiary: rgb(222 230 248 / 58%);
+  --color-fill: rgb(255 255 255 / 8%);
+  --color-fill-strong: rgb(255 255 255 / 14%);
+  --color-shade: rgb(0 0 0 / 30%);
+  --color-separator: rgb(255 255 255 / 11%);
+  --color-danger: #ff6b61;
+  --color-warning: #ffb340;
+  --color-success: #32d583;
+  --color-star: #ffb020;
+  --color-on-accent: #ffffff;
+
+  --color-accent: #0a84ff;
+  --color-accent-bright: color-mix(in oklab, var(--color-accent), white 28%);
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  --color-accent-glow: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  --color-danger-soft: color-mix(in srgb, var(--color-danger) 16%, transparent);
+  --color-warning-soft: color-mix(in srgb, var(--color-warning) 18%, transparent);
+  --color-success-soft: color-mix(in srgb, var(--color-success) 18%, transparent);
+  --color-success-glow: color-mix(in srgb, var(--color-success) 45%, transparent);
+  --color-focus: var(--color-accent-bright);
+
+  --tone-all: #5b8cff;
+  --tone-today: #ffb340;
+  --tone-upcoming: #ff6b61;
+  --tone-important: #ffb020;
+  --tone-completed: #32d583;
+
+  --project-blue: #3d8bff;
+  --project-indigo: #6366f1;
+  --project-violet: #9b6cff;
+  --project-pink: #f25ca2;
+  --project-red: #ef4444;
+  --project-orange: #f97316;
+  --project-yellow: #e5a50a;
+  --project-green: #22c55e;
+  --project-teal: #14b8a6;
+  --project-gray: #8b95a7;
+
+  --glass-tint: rgb(255 255 255 / 6%);
+  --glass-tint-hover: rgb(255 255 255 / 10%);
+  --glass-tint-pressed: rgb(255 255 255 / 15%);
+  --glass-tint-strong: rgb(16 20 36 / 60%);
+  --glass-tint-overlay: rgb(16 20 36 / 94%);
+  --glass-tint-content: rgb(24 28 48 / 62%);
+  --glass-tint-bar: rgb(10 14 26 / 48%);
+  --glass-tint-accent: color-mix(in srgb, var(--color-accent) 88%, transparent);
+  --glass-blur: 14px;
+  --glass-blur-control: 8px;
+  --glass-blur-thick: 26px;
+  --glass-saturate: 150%;
+  --glass-brightness: 1.03;
+  --glass-rim: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 50%) 0%,
+    rgb(255 255 255 / 12%) 28%,
+    rgb(255 255 255 / 4%) 55%,
+    rgb(255 255 255 / 10%) 78%,
+    rgb(255 255 255 / 30%) 100%
+  );
+  --glass-sheen: linear-gradient(180deg, rgb(255 255 255 / 8%) 0%, rgb(255 255 255 / 2%) 38%, transparent 60%);
+  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 14%), inset 0 -1px 1px rgb(255 255 255 / 4%);
+  --glass-shadow: 0 1px 2px rgb(0 0 0 / 22%), 0 10px 28px -10px rgb(0 0 0 / 55%);
+  --glass-shadow-lifted: 0 2px 6px rgb(0 0 0 / 26%), 0 24px 48px -16px rgb(0 0 0 / 70%);
+  --bar-shadow: 0 1px 0 rgb(255 255 255 / 6%), 0 12px 32px -20px rgb(0 0 0 / 70%);
+
+  --backdrop-base: linear-gradient(165deg, #0b1122 0%, #060910 55%, #090c19 100%);
+  --accent-orb-1: #2f6bff;
+  --accent-orb-2: #1fb5e6;
+  --accent-orb-3: #6a5cff;
+  --accent-orb-4: #19c3b3;
+  --accent-orb-5: #3a8dff;
+  --orb-1: var(--accent-orb-1);
+  --orb-2: var(--accent-orb-2);
+  --orb-3: var(--accent-orb-3);
+  --orb-4: var(--accent-orb-4);
+  --orb-5: var(--accent-orb-5);
+  --star-color: rgb(255 255 255 / 85%);
+  --orb-opacity: 0.56;
+  --orb-opacity-rich: 0.46;
+  --orb-blend: screen;
+  --waves-filter: none;
+  --waves-opacity: 0.8;
+  --grain-opacity: 0.3;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-sheet: 40px;
+  --radius-full: 999px;
+
+  // Inner radius = outer radius - the padding between them
+  --radius-in-popover: calc(var(--radius-xl) - 6px);
+  --radius-in-menu: calc(var(--radius-lg) - 6px);
+  --radius-in-card: calc(var(--radius-xl) - 16px);
+  --radius-in-sheet: calc(var(--radius-sheet) - 20px);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: linear(
+    0,
+    0.047,
+    0.156,
+    0.292,
+    0.431,
+    0.561,
+    0.673,
+    0.766,
+    0.839,
+    0.896,
+    0.937,
+    0.966,
+    0.986,
+    0.999,
+    1.006,
+    1.01,
+    1.011,
+    1.011,
+    1.01,
+    1.008,
+    1.007,
+    1.005,
+    1.004,
+    1.003,
+    1
+  );
+  --ease-bounce: linear(
+    0,
+    0.04,
+    0.139,
+    0.274,
+    0.424,
+    0.573,
+    0.711,
+    0.829,
+    0.926,
+    1,
+    1.052,
+    1.085,
+    1.102,
+    1.107,
+    1.102,
+    1.091,
+    1.076,
+    1.06,
+    1.044,
+    1.03,
+    1.017,
+    1.007,
+    0.999,
+    0.994,
+    0.991,
+    0.989,
+    0.989,
+    0.989,
+    0.99,
+    0.992,
+    0.994,
+    0.995,
+    1
+  );
+
+  --duration-fast: 160ms;
+  --duration-base: 280ms;
+  --duration-slow: 520ms;
+}
+
+// Accent colours and their backdrop orbs, dark appearance
+@each $name, $accent in $accents {
+  :root[data-accent="#{$name}"] {
+    --color-accent: #{map.get($accent, dark)};
+
+    @if map.has-key($accent, on-dark) {
+      --color-on-accent: #{map.get($accent, on-dark)};
+    }
+
+    @for $index from 1 through 5 {
+      --accent-orb-#{$index}: #{list.nth(map.get($accent, orbs), $index)};
+    }
+  }
+}
+
+// Orb colours of every backdrop
+@each $name, $orbs in $backdrops {
+  :root[data-backdrop="#{$name}"] {
+    @for $index from 1 through 5 {
+      --orb-#{$index}: #{list.nth($orbs, $index)};
+    }
+  }
+}
+
+// Accent colours for the light appearance
+@mixin light-accents {
+  @each $name, $accent in $accents {
+    &[data-accent="#{$name}"] {
+      --color-accent: #{map.get($accent, light)};
+      --color-on-accent: #ffffff;
+    }
+  }
+}
+
+// Tinted glass in the dark appearance
+@mixin tinted-dark {
+  --glass-tint: rgb(24 28 46 / 52%);
+  --glass-tint-hover: rgb(32 36 58 / 58%);
+  --glass-tint-pressed: rgb(40 44 68 / 64%);
+  --glass-tint-strong: rgb(16 20 36 / 82%);
+  --glass-tint-overlay: rgb(16 20 36 / 94%);
+  --glass-tint-content: rgb(20 24 42 / 78%);
+  --glass-tint-bar: rgb(12 16 30 / 72%);
+}
+
+// Denser glass without blur in the dark appearance
+@mixin reduced-dark {
+  --glass-tint: rgb(26 30 50 / 78%);
+  --glass-tint-hover: rgb(34 38 62 / 84%);
+  --glass-tint-pressed: rgb(42 46 72 / 90%);
+  --glass-tint-strong: rgb(18 22 38 / 94%);
+  --glass-tint-overlay: rgb(18 22 38 / 94%);
+  --glass-tint-content: rgb(20 24 42 / 90%);
+  --glass-tint-bar: rgb(12 16 30 / 92%);
+  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 8%), inset 0 0 0 1px rgb(255 255 255 / 9%);
+  --glass-shadow: 0 1px 3px rgb(0 0 0 / 30%);
+  --glass-shadow-lifted: 0 8px 20px -8px rgb(0 0 0 / 60%);
+  --bar-shadow: 0 1px 0 rgb(255 255 255 / 6%);
+}
+
+// Denser glass without blur in the light appearance
+@mixin reduced-light {
+  --glass-tint: rgb(255 255 255 / 78%);
+  --glass-tint-hover: rgb(255 255 255 / 86%);
+  --glass-tint-pressed: rgb(255 255 255 / 94%);
+  --glass-tint-strong: rgb(250 251 255 / 95%);
+  --glass-tint-overlay: rgb(250 251 255 / 95%);
+  --glass-tint-content: rgb(252 253 255 / 92%);
+  --glass-tint-bar: rgb(248 250 255 / 92%);
+  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 80%), inset 0 0 0 1px rgb(20 32 64 / 8%);
+  --glass-shadow: 0 1px 3px rgb(20 32 64 / 10%);
+  --glass-shadow-lifted: 0 8px 20px -8px rgb(20 32 64 / 28%);
+  --bar-shadow: 0 1px 0 rgb(20 32 64 / 8%);
+}
+
+// Tinted glass in the light appearance
+@mixin tinted-light {
+  --glass-tint: rgb(255 255 255 / 66%);
+  --glass-tint-hover: rgb(255 255 255 / 76%);
+  --glass-tint-pressed: rgb(255 255 255 / 86%);
+  --glass-tint-strong: rgb(250 251 255 / 90%);
+  --glass-tint-overlay: rgb(250 251 255 / 94%);
+  --glass-tint-content: rgb(252 253 255 / 86%);
+  --glass-tint-bar: rgb(248 250 255 / 82%);
+}
+
+// Light when picked in the settings
+:root[data-appearance="light"] {
+  @include light-tokens;
+  @include light-accents;
+}
+
+// Light when the system is light, unless dark was picked
+@media (prefers-color-scheme: light) {
+  :root:not([data-appearance="dark"]) {
+    @include light-tokens;
+    @include light-accents;
+  }
+}
+
+// Tinted glass, dark by default
+:root[data-glass="tinted"] {
+  @include tinted-dark;
+}
+
+// Tinted glass in a picked light appearance
+:root[data-glass="tinted"][data-appearance="light"] {
+  @include tinted-light;
+}
+
+// Tinted glass in a light system appearance
+@media (prefers-color-scheme: light) {
+  :root[data-glass="tinted"]:not([data-appearance="dark"]) {
+    @include tinted-light;
+  }
+}
+
+// Reduced effects trade blur for denser tints and short shadows
+:root[data-effects="reduced"] {
+  @include reduced-dark;
+}
+
+// Reduced effects in a picked light appearance
+:root[data-effects="reduced"][data-appearance="light"] {
+  @include reduced-light;
+}
+
+// Reduced effects in a light system appearance
+@media (prefers-color-scheme: light) {
+  :root[data-effects="reduced"]:not([data-appearance="dark"]) {
+    @include reduced-light;
+  }
+}
+
+// A wider layout with the details column
+@include from(xl) {
+  :root {
+    --layout-width: 92rem;
+  }
+}
+
+// Room for the tab bar on phones
+@include below(lg) {
+  :root {
+    --tabbar-offset: 76px;
+  }
+}
+
+// Room for the title bar of the installed app
+@media (display-mode: window-controls-overlay) {
+  :root {
+    --titlebar-height: env(titlebar-area-height, 32px);
+  }
+}
+
+// Near instant transitions for reduced motion
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+  }
+}
+
+// Solid surfaces for reduced transparency
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  :root[data-glass][data-appearance],
+  :root[data-glass]:not([data-appearance="dark"]) {
+    --glass-tint: color-mix(in srgb, var(--color-backdrop) 92%, var(--color-text));
+    --glass-tint-hover: color-mix(in srgb, var(--color-backdrop) 86%, var(--color-text));
+    --glass-tint-pressed: color-mix(in srgb, var(--color-backdrop) 80%, var(--color-text));
+    --glass-tint-strong: color-mix(in srgb, var(--color-backdrop) 94%, var(--color-text));
+    --glass-tint-content: color-mix(in srgb, var(--color-backdrop) 92%, var(--color-text));
+    --glass-tint-bar: color-mix(in srgb, var(--color-backdrop) 94%, var(--color-text));
+    --glass-blur: 0px;
+    --glass-blur-control: 0px;
+    --glass-blur-thick: 0px;
+    --glass-saturate: 100%;
+    --glass-brightness: 1;
+  }
+}
+
+// Stronger text, lines and glass for more contrast
+@media (prefers-contrast: more) {
+  :root,
+  :root[data-glass][data-appearance],
+  :root[data-glass]:not([data-appearance="dark"]) {
+    --color-text-secondary: color-mix(in srgb, var(--color-text) 88%, transparent);
+    --color-text-tertiary: color-mix(in srgb, var(--color-text) 76%, transparent);
+    --color-separator: color-mix(in srgb, var(--color-text) 40%, transparent);
+    --glass-tint: color-mix(in srgb, var(--color-backdrop) 86%, transparent);
+    --glass-tint-strong: color-mix(in srgb, var(--color-backdrop) 94%, transparent);
+    --glass-tint-content: color-mix(in srgb, var(--color-backdrop) 90%, transparent);
+    --glass-tint-bar: color-mix(in srgb, var(--color-backdrop) 92%, transparent);
+    --glass-rim: linear-gradient(var(--color-separator), var(--color-separator));
+    --glass-edge: inset 0 0 0 1px var(--color-separator);
+  }
+}
+
+// Paper is white, so a printed list uses the light tokens in any appearance
+@media print {
+  :root,
+  :root[data-appearance],
+  :root[data-glass][data-appearance],
+  :root[data-effects][data-appearance],
+  :root[data-glass]:not([data-appearance="dark"]) {
+    @include light-tokens;
+    @include light-accents;
+    @include reduced-light;
+
+    color-scheme: light;
+  }
+}

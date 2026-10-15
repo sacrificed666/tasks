@@ -1,0 +1,13 @@
+@use "@/shared/styles/mixins" as *;
+
+.inspector {
+  grid-area: inspector;
+  position: sticky;
+  inset-block-start: calc(var(--titlebar-height) + 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-inline-size: 0;
+
+  @include hide-in-print;
+}

@@ -1,0 +1,80 @@
+@use "@/shared/styles/mixins" as *;
+
+.nav {
+  padding: 6px 4px 4px;
+
+  * + & {
+    margin-block-start: 2px;
+    padding-block-start: 12px;
+    border-block-start: 1px solid var(--color-separator);
+  }
+}
+
+.heading {
+  padding: 0 8px 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-inline: 4px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-inline-size: 100%;
+  block-size: 30px;
+  padding-inline: 8px 6px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  @include pressable(0.95);
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+    color: var(--color-text);
+  }
+
+  &[aria-pressed="true"] {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+}
+
+.icon {
+  flex: none;
+  font-size: 0.8125rem;
+  opacity: 0.7;
+}
+
+.name {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count {
+  min-inline-size: 1.25rem;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.6;
+  text-align: center;
+
+  .tag[aria-pressed="true"] & {
+    background-color: rgb(255 255 255 / 22%);
+  }
+}

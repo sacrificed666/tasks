@@ -1,0 +1,63 @@
+@use "@/shared/styles/mixins" as *;
+
+.footer {
+  @include container;
+  padding-block: 0 max(24px, env(safe-area-inset-bottom));
+
+  // Room for the tab bar on phones
+  @include below(lg) {
+    padding-block-end: calc(24px + var(--tabbar-offset) + env(safe-area-inset-bottom));
+  }
+
+  @include hide-in-print;
+}
+
+.bar {
+  @include glass(var(--radius-xl), $content: true);
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 16px 20px;
+  font-size: 0.875rem;
+
+  // At least 24 px tall, so links on wrapped lines stay easy to hit
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 1.5rem;
+    color: var(--color-text);
+    text-decoration-color: var(--color-text-tertiary);
+    text-underline-offset: 0.2em;
+
+    @include hover {
+      color: var(--color-accent);
+    }
+  }
+}
+
+.owner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-weight: 600;
+
+  > span {
+    color: var(--color-text-tertiary);
+  }
+
+  a {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}

@@ -1,0 +1,92 @@
+@use "@/shared/styles/menu" as *;
+
+.chip {
+  @include chip;
+
+  &[data-active] {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-bright);
+  }
+
+  // Tags typed in the title get the same outline as other recognised chips
+  &[data-detected] {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent-bright) 55%, transparent);
+  }
+}
+
+.icon {
+  font-size: 1rem;
+}
+
+.label {
+  min-inline-size: 0;
+  max-inline-size: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel {
+  inline-size: min(16rem, calc(100vw - 24px));
+  max-block-size: min(24rem, calc(100dvh - 32px));
+}
+
+.heading {
+  @include menu-heading;
+}
+
+.search {
+  inline-size: 100%;
+  block-size: 38px;
+  margin-block-end: 4px;
+  padding-inline: 12px;
+  border: 0;
+  border-radius: var(--radius-in-popover);
+  background-color: var(--color-fill);
+  box-shadow: inset 0 0 0 1px var(--color-separator);
+  font-size: 0.9375rem;
+  outline: none;
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  // One ring inside the field instead of the global outline
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-focus);
+  }
+}
+
+.option {
+  @include menu-option;
+}
+
+.optionIcon {
+  inline-size: 18px;
+  font-size: 1rem;
+  color: var(--color-text-tertiary);
+}
+
+.optionLabel {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.check {
+  font-size: 1rem;
+  color: var(--color-accent-bright);
+  opacity: 0;
+
+  .option[aria-pressed="true"] & {
+    opacity: 1;
+  }
+}
+
+.empty {
+  padding: 8px 10px 10px;
+  font-size: 0.8125rem;
+  color: var(--color-text-tertiary);
+}

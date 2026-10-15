@@ -1,0 +1,82 @@
+@use "@/shared/styles/mixins" as *;
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  block-size: 42px;
+  padding: 4px 5px 4px 14px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  box-shadow:
+    inset 0 1px 2px var(--color-shade),
+    0 1px 0 rgb(255 255 255 / 6%);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+
+  &:focus-within {
+    background-color: var(--color-fill-strong);
+    box-shadow:
+      inset 0 1px 2px var(--color-shade),
+      0 0 0 2px var(--color-focus);
+  }
+}
+
+.icon {
+  font-size: 1.0625rem;
+  color: var(--color-text-secondary);
+}
+
+.input {
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 32px;
+  border: 0;
+  background: none;
+  font-size: 0.9375rem;
+  outline: none;
+  appearance: none;
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    appearance: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.hint {
+  display: grid;
+  place-items: center;
+  flex: none;
+  min-inline-size: 34px;
+  block-size: 28px;
+  margin-inline-end: 2px;
+  padding-inline: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-fill);
+  box-shadow: inset 0 -1px 0 var(--color-shade);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  @include pressable(0.94);
+
+  @include hover {
+    background-color: var(--color-fill-strong);
+    color: var(--color-text);
+  }
+
+  // No shortcut hint on touch screens
+  @media (pointer: coarse) {
+    display: none;
+  }
+}

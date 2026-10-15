@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    // Incremental build state, kept out of the repository
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    // The Vite and Vitest configs run in Node.js
+    "target": "es2023",
+    "lib": ["ES2023"],
+    "types": ["node"],
+    // Node.js loads them as ES modules, so TypeScript only checks them
+    "module": "nodenext",
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    // Strict checks, and a few more beyond strict
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["vite.config.ts", "vitest.config.ts"]
+}

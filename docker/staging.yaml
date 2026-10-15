@@ -1,0 +1,35 @@
+# Production build on nginx that search engines must not index
+name: tasks-staging
+
+services:
+  app:
+    image: tasks:staging
+    build:
+      target: runtime
+      args:
+        APP_ENV: staging
+    # APP_ENV decides whether search engines may index the site
+    environment:
+      APP_ENV: staging
+    # APP_PORT changes the port on the host
+    ports:
+      - "${APP_PORT:-8081}:8080"
+    # Comes back after a crash or a reboot
+    restart: unless-stopped
+    # Locked down: read-only files, no privileges, bounded resources
+    read_only: true
+    # Writable for the nginx user only: temp files, cache and the generated config
+    tmpfs:
+      - /tmp:uid=101,gid=101
+      - /var/cache/nginx:uid=101,gid=101
+      - /etc/nginx/conf.d:uid=101,gid=101
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 100
+    mem_limit: 128m
+    cpus: 0.5
+    # Rotates the logs at 10 MB, keeping three files
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"

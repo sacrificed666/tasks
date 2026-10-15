@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    // Incremental build state, kept out of the repository
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    // Modern browsers with the Vite and PWA client types
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "types": ["vite/client", "vite-plugin-pwa/client"],
+    // Vite bundles the code, so TypeScript only checks it
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "allowArbitraryExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    // The @ alias for src
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    // Strict checks, and a few more beyond strict
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}
