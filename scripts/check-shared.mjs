@@ -3,8 +3,9 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 
 const root = new URL("../", import.meta.url).pathname;
 const self = basename(root);
-const APPS = ["tasks", "weather", "faceit-stats"];
-const NEXT_APPS = new Set(["weather", "faceit-stats"]);
+const APPS = ["tasks", "weather", "faceit-stats", "finance"];
+const NEXT_APPS = new Set(["weather", "faceit-stats", "finance"]);
+const VERCEL_APPS = new Set(["weather", "faceit-stats"]);
 const SHARED = [
   ".editorconfig",
   ".githooks/commit-msg",
@@ -21,22 +22,31 @@ const SHARED = [
   "scripts/release-notes.mjs",
 ];
 const SHARED_BY_NEXT = [
+  ".oxfmtrc.json",
+  "src/features/notifications/model/offlinePage.test.ts",
+  "src/features/notifications/model/offlinePage.ts",
+  "tsconfig.json",
+];
+const SHARED_BY_VERCEL = [
   ".dockerignore",
   ".gitignore",
-  ".oxfmtrc.json",
   "public/sw.js",
   "src/instrumentation.test.ts",
   "src/instrumentation.ts",
-  "src/features/notifications/model/offlinePage.test.ts",
-  "src/features/notifications/model/offlinePage.ts",
   "src/features/notifications/ui/ServiceWorker/ServiceWorker.test.tsx",
   "src/features/notifications/ui/ServiceWorker/ServiceWorker.tsx",
-  "tsconfig.json",
   "vercel.json",
 ];
 
+// Whether both apps belong to a group
+const both = (group, a, b) => group.has(a) && group.has(b);
+
 // The files two apps must keep identical
-const sharedFiles = (a, b) => (NEXT_APPS.has(a) && NEXT_APPS.has(b) ? [...SHARED, ...SHARED_BY_NEXT] : SHARED);
+const sharedFiles = (a, b) => [
+  ...SHARED,
+  ...(both(NEXT_APPS, a, b) ? SHARED_BY_NEXT : []),
+  ...(both(VERCEL_APPS, a, b) ? SHARED_BY_VERCEL : []),
+];
 
 // --sync copies the files of this app over the others; a folder may follow
 const args = process.argv.slice(2);
@@ -45,7 +55,10 @@ const folder = args.find((arg) => !arg.startsWith("--"));
 // The folder with the other apps: the argument, or the parent of this one
 const parent = folder ? resolve(folder) : join(root, "..");
 // How another app is named in the messages
-const where = (app) => relative(process.cwd(), join(parent, app)) || app;
+const where = (app) => {
+  const path = relative(process.cwd(), join(parent, app));
+  return path === "" ? app : path;
+};
 
 const siblings = APPS.filter((app) => app !== self && existsSync(join(parent, app, "package.json")));
 if (siblings.length === 0) {

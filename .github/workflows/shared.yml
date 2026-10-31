@@ -1,6 +1,6 @@
 name: 🔗 Tasks | Shared files
 
-# Weekly and by hand: the files the three apps share must stay identical
+# Weekly and by hand: the files the four apps share must stay identical
 on:
   schedule:
     - cron: "53 6 * * 1"
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   shared:
-    name: 🔗 Shared | Compare with weather and faceit-stats
+    name: 🔗 Shared | Compare with weather, faceit-stats and finance
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -33,6 +33,13 @@ jobs:
         with:
           repository: sacrificed666/faceit-stats
           path: siblings/faceit-stats
+          persist-credentials: false
+
+      - name: 📥 Git | Checkout finance
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: sacrificed666/finance
+          path: siblings/finance
           persist-credentials: false
 
       - name: 🟢 Node | Set up environment

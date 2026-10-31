@@ -318,7 +318,7 @@ audit: ## 🛡️  Check the dependencies for known vulnerabilities
 shared: ## 🔗 Compare the files shared with ../tasks, ../weather and ../faceit-stats
 	node scripts/check-shared.mjs
 
-shared-sync: ## 🔁 Copy the shared files of this app over the other two
+shared-sync: ## 🔁 Copy the shared files of this app over the other three
 	node scripts/check-shared.mjs --sync
 
 clean: ## 🧹 Remove build output, caches and reports

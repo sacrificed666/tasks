@@ -4,6 +4,10 @@ All notable changes to Tasks are documented here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+### Changed
+
+- 🔗 Finance shares the common files too: `make shared`, `make shared-sync` and the weekly check cover all four apps, and the live check also reads a health check with a query, such as `/healthz?db=1`.
+
 ## [1.0.0] - 2026-10-15
 
 The first release.

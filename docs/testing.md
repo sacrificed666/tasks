@@ -70,7 +70,7 @@ Tests sit next to the code they cover as `*.test.ts(x)`, and every component has
 
 Vitest runs with `pool: "vmThreads"`: one jsdom per worker, and every test file in a fresh context of its own, which is about twice as fast as a new process per file. Built-in browser objects such as `location` cannot be redefined in that pool, so code that reloads the page calls a small wrapper that tests spy on instead, `reloadPage()` in `shared/lib/navigation.ts`.
 
-Unit tests run without React Compiler, the same in all three apps, so coverage counts the branches of the source rather than the cache checks the compiler adds. The production build, the end-to-end tests and Lighthouse cover the compiled code. `vite.config.ts` leaves the compiler out while `VITEST` is set.
+Unit tests run without React Compiler, the same in all four apps, so coverage counts the branches of the source rather than the cache checks the compiler adds. The production build, the end-to-end tests and Lighthouse cover the compiled code. `vite.config.ts` leaves the compiler out while `VITEST` is set.
 
 ## 🛠️ Helpers
 
@@ -148,7 +148,7 @@ Every spec except Lighthouse runs in **Desktop Chrome** and in **Desktop Safari*
 Every audit of the accessibility category must pass as well, including the ones Lighthouse does not weigh into the score. Each run attaches the full Lighthouse HTML report to its test in the Playwright report.
 
 > [!NOTE]
-> Locally the app scores 1 on desktop and 0.95 for performance on mobile, with 242 KB transferred; the score thresholds leave room for slower CI machines. Each page weight limit sits about 35 to 40 KB above what the page weighs today, the same rule in all three apps, so a heavier dependency or a bigger prefetch fails the build early; lower the limits again when a page gets lighter.
+> Locally the app scores 1 on desktop and 0.95 for performance on mobile, with 242 KB transferred; the score thresholds leave room for slower CI machines. Each page weight limit sits about 35 to 40 KB above what the page weighs today, the same rule in all four apps, so a heavier dependency or a bigger prefetch fails the build early; lower the limits again when a page gets lighter.
 
 ## 📊 Coverage thresholds
 
@@ -161,4 +161,4 @@ Every audit of the accessibility category must pass as well, including the ones 
 | 🧩 Functions  |      94 % |
 | 📏 Lines      |      96 % |
 
-The suite currently covers about 95 % of statements, 90 % of branches, 95 % of functions and 97 % of lines. Each threshold sits about a point below the current coverage, the same rule in all three apps, so a change can only keep or raise it; raise them again when new tests add a point. The CI pipeline runs the same command, publishes a coverage table on the workflow summary page and uploads the HTML coverage and Playwright reports.
+The suite currently covers about 95 % of statements, 90 % of branches, 95 % of functions and 97 % of lines. Each threshold sits about a point below the current coverage, the same rule in all four apps, so a change can only keep or raise it; raise them again when new tests add a point. The CI pipeline runs the same command, publishes a coverage table on the workflow summary page and uploads the HTML coverage and Playwright reports.

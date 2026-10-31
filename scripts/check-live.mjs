@@ -66,7 +66,7 @@ const checkJson = (body) => {
 const inspect = (path, type, body) => {
   if (path.endsWith("security.txt")) return checkSecurityTxt(body);
   if (type.includes("json")) return checkJson(body);
-  if (path.endsWith("healthz")) return { ok: body.trim() === "ok", note: "" };
+  if (path.includes("healthz")) return { ok: body.trim() === "ok", note: "" };
   if (type.includes("html")) return { ok: /<title>[^<]+<\/title>/u.test(body), note: "" };
   return { ok: body.length > 0, note: "" };
 };

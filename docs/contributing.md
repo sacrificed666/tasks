@@ -33,7 +33,7 @@ Formatting and linting are automated, so reviews can focus on behaviour.
 - 🧹 **Oxlint** enables the `correctness`, `suspicious` and `perf` categories together with type-aware TypeScript rules, React hooks and React Compiler rules, `jsx-a11y`, `import`, `unicorn` and `vitest` plugins, plus the layer rules described below. Run `npm run lint`.
 - 🔷 **TypeScript** runs in strict mode with `noUncheckedIndexedAccess`, `verbatimModuleSyntax` and `erasableSyntaxOnly`.
 - 🧾 **No em or en dashes** in code, docs or texts: `npm run lint:text`, part of `npm run check` and CI, points to each one. Use a comma, a colon or a hyphen instead.
-- 🔗 **Shared files stay identical.** The Git hooks, the scripts in `scripts/` that all three apps use, the comment plugin and the editor and Dependabot settings are the same in tasks, weather and faceit-stats; `make shared` compares them when the other apps are checked out next to this one, `make shared-sync` copies the files of the app you changed over the other two, and the weekly **Shared files** workflow checks out the other two repositories and runs the same comparison.
+- 🔗 **Shared files stay identical.** The Git hooks, the scripts in `scripts/` that all four apps use, the comment plugin and the editor and Dependabot settings are the same in tasks, weather, faceit-stats and finance; `make shared` compares them when the other apps are checked out next to this one, `make shared-sync` copies the files of the app you changed over the other three, and the weekly **Shared files** workflow checks out the other three repositories and runs the same comparison.
 
 ### 💬 Comments
 
