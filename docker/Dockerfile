@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Node.js by digest on the builder's own platform, as dist/ suits every one
-FROM --platform=$BUILDPLATFORM node:26.10-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80 AS base
+FROM --platform=$BUILDPLATFORM node:26.13-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS base
 WORKDIR /app
 
 # Dependencies, cached until the lockfile changes
